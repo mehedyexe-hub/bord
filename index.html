@@ -4,15 +4,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0b1020">
 
 <title>CoolBoard Studio</title>
 
 <style>
 
-/* ================================
+/* =========================================
    RESET
-================================ */
+========================================= */
 
 *{
     box-sizing:border-box;
@@ -25,60 +24,112 @@ body{
     width:100%;
     height:100%;
     overflow:hidden;
-    background:#080b16;
     font-family:Arial,sans-serif;
+    background:#070a14;
 }
 
-/* ================================
+button,
+input{
+    font-family:inherit;
+}
+
+
+/* =========================================
    APP
-================================ */
+========================================= */
 
 .app{
-    height:100dvh;
     width:100%;
+    height:100dvh;
+
     display:flex;
     flex-direction:column;
+
     background:
-    radial-gradient(circle at top,
-    #182550 0%,
-    #0a0e1d 55%);
+    radial-gradient(
+        circle at 20% 0%,
+        rgba(86,77,180,.25),
+        transparent 30%
+    ),
+    radial-gradient(
+        circle at 90% 30%,
+        rgba(28,114,190,.15),
+        transparent 30%
+    ),
+    linear-gradient(
+        135deg,
+        #070a14,
+        #0c1022,
+        #080c18
+    );
+
+    overflow:hidden;
 }
 
-/* ================================
+
+/* =========================================
    HEADER
-================================ */
+========================================= */
 
 .header{
-    height:50px;
-    min-height:50px;
+
+    height:48px;
+    min-height:48px;
 
     display:flex;
     align-items:center;
     justify-content:space-between;
 
-    padding:0 12px;
+    padding:0 10px;
 
     background:
-    rgba(10,14,30,.95);
+    rgba(10,14,30,.85);
+
+    backdrop-filter:blur(15px);
 
     border-bottom:
-    1px solid rgba(255,255,255,.08);
+    1px solid
+    rgba(255,255,255,.08);
+
+    box-shadow:
+    0 5px 20px
+    rgba(0,0,0,.2);
+
+    z-index:50;
 }
+
 
 .logo{
+
     color:#fff;
-    font-size:15px;
+
+    font-size:14px;
+
     font-weight:bold;
+
+    letter-spacing:.3px;
+
+    text-shadow:
+    0 0 15px
+    rgba(123,92,255,.5);
 }
+
 
 .logo span{
-    color:#8b74ff;
+
+    color:#9d85ff;
+
 }
 
+
 .mode-switch{
+
     display:flex;
+
     gap:5px;
+
 }
+
 
 .mode-btn{
 
@@ -86,31 +137,53 @@ body{
 
     padding:7px 9px;
 
-    border-radius:9px;
+    border-radius:10px;
 
-    background:#20294a;
+    background:
+    linear-gradient(
+        145deg,
+        #222b4a,
+        #141a30
+    );
 
-    color:#d9e0ff;
+    color:#dce3ff;
 
-    font-size:10px;
+    font-size:9px;
 
     cursor:pointer;
+
+    box-shadow:
+    3px 3px 8px
+    rgba(0,0,0,.35),
+    inset 1px 1px 2px
+    rgba(255,255,255,.05);
+
+    transition:.25s;
+
 }
+
 
 .mode-btn.active{
 
     background:
     linear-gradient(
-    135deg,
-    #745cff,
-    #2caeff);
+        135deg,
+        #795dff,
+        #248ee8
+    );
 
     color:white;
+
+    box-shadow:
+    0 0 18px
+    rgba(103,88,255,.4);
+
 }
 
-/* ================================
+
+/* =========================================
    BOARD AREA
-================================ */
+========================================= */
 
 .board-area{
 
@@ -121,88 +194,334 @@ body{
     display:flex;
 
     align-items:center;
-
     justify-content:center;
 
-    padding:7px;
+    padding:6px;
 
     overflow:hidden;
+
 }
 
-/* ================================
+
+/* =========================================
    BOARD
-================================ */
+========================================= */
 
 .board{
 
     width:100%;
-
     height:100%;
 
-    max-width:1100px;
+    max-width:1200px;
 
     position:relative;
 
     overflow:hidden;
 
-    background:#e6e7eb;
+    border-radius:14px;
 
-    border-radius:13px;
+    background:#e4e6ea;
 
     box-shadow:
-    0 10px 35px
-    rgba(0,0,0,.35);
+
+    0 20px 50px
+    rgba(0,0,0,.45),
+
+    inset
+    0 0 0 1px
+    rgba(255,255,255,.7);
 
     touch-action:none;
+
 }
 
-canvas{
+
+/* subtle board texture */
+
+.board::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+    opacity:.12;
+
+    background-image:
+
+    linear-gradient(
+        rgba(0,0,0,.04) 1px,
+        transparent 1px
+    ),
+
+    linear-gradient(
+        90deg,
+        rgba(0,0,0,.04) 1px,
+        transparent 1px
+    );
+
+    background-size:
+    25px 25px;
+
+}
+
+
+/* =========================================
+   CANVAS
+========================================= */
+
+#canvas{
 
     position:absolute;
 
     inset:0;
 
     width:100%;
-
     height:100%;
 
     touch-action:none;
+
 }
 
-/* ================================
+
+/* =========================================
+   SELECTION
+========================================= */
+
+.selection-box{
+
+    position:absolute;
+
+    display:none;
+
+    pointer-events:none;
+
+    border:
+    2px dashed
+    #755cff;
+
+    border-radius:6px;
+
+    box-shadow:
+
+    0 0 0 1px
+    rgba(255,255,255,.7),
+
+    0 0 15px
+    rgba(103,85,255,.7);
+
+    z-index:30;
+
+    animation:
+    selectionGlow
+    1s infinite alternate;
+
+}
+
+
+@keyframes selectionGlow{
+
+    from{
+
+        box-shadow:
+        0 0 8px
+        rgba(105,82,255,.5);
+
+    }
+
+    to{
+
+        box-shadow:
+        0 0 20px
+        rgba(105,82,255,.9);
+
+    }
+
+}
+
+
+/* =========================================
+   SELECTED OBJECT
+========================================= */
+
+.selected-canvas{
+
+    position:absolute;
+
+    display:none;
+
+    z-index:20;
+
+    cursor:grab;
+
+    touch-action:none;
+
+    filter:
+    drop-shadow(
+        0 6px 12px
+        rgba(0,0,0,.25)
+    );
+
+}
+
+
+.selected-canvas.dragging{
+
+    cursor:grabbing;
+
+}
+
+
+/* =========================================
+   EMOJI
+========================================= */
+
+.emoji-object{
+
+    position:absolute;
+
+    z-index:15;
+
+    font-size:42px;
+
+    line-height:1;
+
+    cursor:grab;
+
+    user-select:none;
+
+    touch-action:none;
+
+    filter:
+
+    drop-shadow(
+        0 5px 5px
+        rgba(0,0,0,.2)
+    );
+
+}
+
+
+.emoji-object.selected{
+
+    outline:
+    2px dashed
+    #765fff;
+
+    outline-offset:5px;
+
+    border-radius:8px;
+
+}
+
+
+/* =========================================
+   OBJECT MENU
+========================================= */
+
+.object-menu{
+
+    position:absolute;
+
+    display:none;
+
+    gap:5px;
+
+    padding:5px;
+
+    z-index:100;
+
+    background:
+
+    rgba(15,20,42,.95);
+
+    backdrop-filter:
+    blur(15px);
+
+    border:
+
+    1px solid
+    rgba(255,255,255,.12);
+
+    border-radius:10px;
+
+    box-shadow:
+
+    0 10px 30px
+    rgba(0,0,0,.35);
+
+}
+
+
+.object-menu button{
+
+    border:none;
+
+    color:white;
+
+    background:
+
+    linear-gradient(
+        145deg,
+        #2d3962,
+        #1c2544
+    );
+
+    border-radius:7px;
+
+    padding:7px 9px;
+
+    font-size:10px;
+
+}
+
+
+/* =========================================
    TOOLBAR
-================================ */
+========================================= */
 
 .toolbar{
 
-    min-height:205px;
+    min-height:198px;
+    max-height:198px;
 
-    max-height:205px;
-
-    padding:7px;
-
-    background:
-    linear-gradient(
-    180deg,
-    #151c35,
-    #0c1124);
-
-    border-top:
-    1px solid
-    rgba(255,255,255,.08);
+    padding:6px;
 
     display:flex;
 
     flex-direction:column;
 
-    gap:6px;
+    gap:5px;
 
-    overflow:hidden;
+    background:
+
+    linear-gradient(
+        180deg,
+        #141b34,
+        #0b1022
+    );
+
+    border-top:
+
+    1px solid
+    rgba(255,255,255,.08);
+
+    box-shadow:
+
+    0 -10px 25px
+    rgba(0,0,0,.18);
+
+    z-index:60;
+
 }
 
-/* ================================
+
+/* =========================================
    TOOL ROW
-================================ */
+========================================= */
 
 .tool-row{
 
@@ -212,69 +531,108 @@ canvas{
 
     overflow-x:auto;
 
-    padding-bottom:2px;
-
     scrollbar-width:none;
 
     -webkit-overflow-scrolling:touch;
+
+    padding-bottom:2px;
+
 }
+
 
 .tool-row::-webkit-scrollbar{
+
     display:none;
+
 }
 
-/* ================================
+
+/* =========================================
    TOOL BUTTON
-================================ */
+========================================= */
 
 .tool{
 
-    min-width:52px;
+    min-width:48px;
 
-    height:46px;
+    height:42px;
+
+    flex-shrink:0;
 
     border:none;
 
     border-radius:10px;
 
-    background:#202a4a;
+    color:#edf0ff;
 
-    color:white;
+    background:
 
-    font-size:8px;
+    linear-gradient(
+        145deg,
+        #25305a,
+        #18203c
+    );
+
+    box-shadow:
+
+    3px 3px 8px
+    rgba(0,0,0,.3),
+
+    inset
+    1px 1px 2px
+    rgba(255,255,255,.06);
+
+    font-size:7px;
 
     cursor:pointer;
 
-    flex-shrink:0;
+    transition:
+    transform .15s,
+    box-shadow .2s;
 
-    transition:.2s;
 }
+
 
 .tool span{
 
     display:block;
 
-    font-size:17px;
+    font-size:16px;
 
     margin-bottom:2px;
+
 }
+
+
+.tool:active{
+
+    transform:
+    scale(.94);
+
+}
+
 
 .tool.active{
 
     background:
+
     linear-gradient(
-    135deg,
-    #745cff,
-    #2daeff);
+        135deg,
+        #755cff,
+        #258eea
+    );
 
     box-shadow:
-    0 0 12px
-    rgba(100,90,255,.4);
+
+    0 0 15px
+    rgba(101,81,255,.5);
+
 }
 
-/* ================================
-   SETTINGS ROW
-================================ */
+
+/* =========================================
+   SETTINGS
+========================================= */
 
 .settings{
 
@@ -282,41 +640,52 @@ canvas{
 
     align-items:center;
 
-    gap:7px;
+    gap:6px;
 
-    padding:2px 3px;
+    padding:1px 3px;
+
 }
+
 
 .settings label{
 
-    color:#b5bedc;
+    font-size:11px;
 
-    font-size:10px;
 }
+
 
 .settings input[type="range"]{
 
     flex:1;
 
-    accent-color:#795fff;
+    accent-color:#8067ff;
+
 }
+
 
 .settings input[type="color"]{
 
-    width:30px;
+    width:32px;
 
     height:28px;
 
-    border:none;
+    padding:2px;
 
-    background:transparent;
+    border:
+
+    1px solid
+    rgba(255,255,255,.1);
 
     border-radius:7px;
+
+    background:#20294b;
+
 }
 
-/* ================================
+
+/* =========================================
    ACTIONS
-================================ */
+========================================= */
 
 .actions{
 
@@ -326,46 +695,55 @@ canvas{
     repeat(5,1fr);
 
     gap:5px;
+
 }
+
 
 .action{
 
-    height:35px;
+    height:34px;
 
     border:none;
 
-    border-radius:8px;
+    border-radius:9px;
 
-    background:#242e50;
+    color:#e9edff;
 
-    color:white;
+    background:
 
-    font-size:9px;
+    linear-gradient(
+        145deg,
+        #273258,
+        #18203c
+    );
+
+    font-size:8px;
 
     cursor:pointer;
+
 }
 
-.action:active,
-.tool:active{
 
-    transform:scale(.95);
+.action:active{
+
+    transform:
+    scale(.95);
+
 }
 
-/* ================================
+
+/* =========================================
    EMOJI PANEL
-================================ */
+========================================= */
 
 .emoji-panel{
 
     position:absolute;
 
     left:8px;
-
     right:8px;
 
-    bottom:210px;
-
-    z-index:100;
+    bottom:205px;
 
     display:none;
 
@@ -378,215 +756,144 @@ canvas{
 
     overflow-y:auto;
 
-    padding:10px;
+    padding:9px;
+
+    z-index:150;
 
     border-radius:15px;
 
-    background:#151d36;
+    background:
+
+    rgba(19,25,48,.97);
 
     border:
+
     1px solid
     rgba(255,255,255,.1);
 
     box-shadow:
-    0 10px 30px
-    rgba(0,0,0,.4);
 
-    -webkit-overflow-scrolling:touch;
+    0 15px 40px
+    rgba(0,0,0,.5);
+
 }
+
 
 .emoji-panel.show{
+
     display:grid;
+
+    animation:
+    panelShow .2s ease;
+
 }
+
+
+@keyframes panelShow{
+
+    from{
+
+        opacity:0;
+
+        transform:
+        translateY(10px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+        translateY(0);
+
+    }
+
+}
+
 
 .emoji{
 
+    height:38px;
+
     border:none;
 
-    background:#242e50;
+    border-radius:8px;
 
-    border-radius:7px;
+    background:#222d50;
 
     font-size:19px;
 
-    height:38px;
-
     cursor:pointer;
+
 }
 
-/* ================================
-   EMOJI OBJECT
-================================ */
 
-.emoji-object{
-
-    position:absolute;
-
-    z-index:10;
-
-    font-size:42px;
-
-    transform:
-    translate(-50%,-50%);
-
-    touch-action:none;
-
-    user-select:none;
-
-    cursor:grab;
-}
-
-.emoji-object.selected{
-
-    outline:
-    2px dashed
-    #745cff;
-
-    outline-offset:4px;
-
-    border-radius:7px;
-}
-
-/* ================================
-   OBJECT MENU
-================================ */
-
-.object-menu{
-
-    position:absolute;
-
-    z-index:50;
-
-    display:none;
-
-    gap:5px;
-
-    padding:5px;
-
-    background:#11182e;
-
-    border-radius:10px;
-
-    border:
-    1px solid
-    rgba(255,255,255,.1);
-}
-
-.object-menu button{
-
-    border:none;
-
-    border-radius:6px;
-
-    padding:6px 8px;
-
-    background:#273256;
-
-    color:white;
-
-    font-size:10px;
-}
-
-/* ================================
+/* =========================================
    MOBILE
-================================ */
+========================================= */
 
 @media(max-width:600px){
 
     .header{
 
-        height:45px;
+        height:44px;
+        min-height:44px;
 
-        min-height:45px;
-
-        padding:0 8px;
     }
 
     .logo{
 
-        font-size:13px;
-    }
+        font-size:12px;
 
-    .mode-btn{
-
-        padding:6px 7px;
-
-        font-size:9px;
-    }
-
-    .board-area{
-
-        padding:5px;
-    }
-
-    .board{
-
-        border-radius:10px;
     }
 
     .toolbar{
 
-        min-height:210px;
+        min-height:192px;
+        max-height:192px;
 
-        max-height:210px;
-
-        padding:
-        5px 6px
-        calc(5px + env(safe-area-inset-bottom));
     }
 
     .tool{
 
-        min-width:48px;
+        min-width:46px;
 
-        height:43px;
+        height:40px;
 
-        font-size:7px;
-    }
-
-    .tool span{
-
-        font-size:16px;
-    }
-
-    .action{
-
-        height:33px;
-
-        font-size:8px;
     }
 
     .emoji-panel{
 
-        bottom:215px;
+        bottom:198px;
 
         grid-template-columns:
         repeat(7,1fr);
+
     }
 
 }
 
-/* ================================
-   SMALL MOBILE
-================================ */
 
-@media(max-height:700px){
+@media(max-height:680px){
 
     .toolbar{
 
-        min-height:185px;
+        min-height:175px;
+        max-height:175px;
 
-        max-height:185px;
     }
 
     .tool{
 
-        height:40px;
+        height:38px;
+
     }
 
     .emoji-panel{
 
-        bottom:190px;
+        bottom:180px;
+
     }
 
 }
@@ -599,261 +906,320 @@ canvas{
 
 <div class="app">
 
-<!-- ================= HEADER ================= -->
+<!-- =========================================
+     HEADER
+========================================= -->
 
 <div class="header">
 
+```
 <div class="logo">
-✨ <span>CoolBoard</span>
+    ✨ <span>CoolBoard</span>
 </div>
 
 <div class="mode-switch">
 
-<button
-class="mode-btn active"
-onclick="setMode('kids',this)">
-👶 Kids </button>
+    <button
+    class="mode-btn active"
+    onclick="setMode('kids',this)">
+        👶 Kids
+    </button>
 
-<button
-class="mode-btn"
-onclick="setMode('advanced',this)">
-🚀 Advanced </button>
+    <button
+    class="mode-btn"
+    onclick="setMode('advanced',this)">
+        🚀 Advanced
+    </button>
+
+</div>
+```
 
 </div>
 
-</div>
-
-<!-- ================= BOARD ================= -->
+<!-- =========================================
+     BOARD
+========================================= -->
 
 <div class="board-area">
 
+```
 <div
 class="board"
 id="board">
 
-<canvas id="canvas"></canvas>
+    <canvas
+    id="canvas">
+    </canvas>
+
+    <!-- Selection Border -->
+
+    <div
+    id="selectionBox"
+    class="selection-box">
+    </div>
+
+    <!-- Selected Drawing -->
+
+    <canvas
+    id="selectedCanvas"
+    class="selected-canvas">
+    </canvas>
+
+    <!-- Emoji / Object Menu -->
+
+    <div
+    id="objectMenu"
+    class="object-menu">
+
+        <button
+        onclick="deleteSelected()">
+            🗑️ Delete
+        </button>
+
+        <button
+        onclick="deselectAll()">
+            ✓ Done
+        </button>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+<!-- =========================================
+     EMOJI PANEL
+========================================= -->
 
 <div
-class="object-menu"
-id="objectMenu">
-
-<button onclick="deleteSelected()">
-🗑️
-</button>
-
+id="emojiPanel"
+class="emoji-panel">
 </div>
 
-</div>
-
-</div>
-
-<!-- ================= EMOJI ================= -->
-
-<div
-class="emoji-panel"
-id="emojiPanel">
-</div>
-
-<!-- ================= TOOLBAR ================= -->
+<!-- =========================================
+     TOOLBAR
+========================================= -->
 
 <div class="toolbar">
 
-<!-- ROW 1 -->
+```
+<!-- MAIN TOOLS -->
 
 <div class="tool-row">
 
-<button
-class="tool active"
-data-tool="pencil">
+    <button
+    class="tool active"
+    data-tool="pencil">
 
-<span>✏️</span>
-Pencil
+        <span>✏️</span>
+        Pencil
 
-</button>
+    </button>
 
-<button
-class="tool"
-data-tool="brush">
 
-<span>🖌️</span>
-Brush
+    <button
+    class="tool"
+    data-tool="brush">
 
-</button>
+        <span>🖌️</span>
+        Brush
 
-<button
-class="tool"
-data-tool="eraser">
+    </button>
 
-<span>🧽</span>
-Erase
 
-</button>
+    <button
+    class="tool"
+    data-tool="eraser">
 
-<button
-class="tool"
-data-tool="select">
+        <span>🧽</span>
+        Eraser
 
-<span>🎯</span>
-Move
+    </button>
 
-</button>
 
-<button
-class="tool"
-data-tool="emoji">
+    <button
+    class="tool"
+    data-tool="select">
 
-<span>😀</span>
-Emoji
+        <span>🎯</span>
+        Move
 
-</button>
+    </button>
 
-<button
-class="tool advanced"
-data-tool="line">
 
-<span>➖</span>
-Line
+    <button
+    class="tool"
+    data-tool="emoji">
 
-</button>
+        <span>😀</span>
+        Emoji
 
-<button
-class="tool advanced"
-data-tool="arrow">
+    </button>
 
-<span>➡️</span>
-Arrow
 
-</button>
+    <!-- ADVANCED -->
 
-<button
-class="tool advanced"
-data-tool="circle">
+    <button
+    class="tool advanced"
+    data-tool="line">
 
-<span>⭕</span>
-Circle
+        <span>➖</span>
+        Line
 
-</button>
+    </button>
 
-<button
-class="tool advanced"
-data-tool="rectangle">
 
-<span>▭</span>
-Box
+    <button
+    class="tool advanced"
+    data-tool="arrow">
 
-</button>
+        <span>➡️</span>
+        Arrow
 
-<button
-class="tool advanced"
-data-tool="triangle">
+    </button>
 
-<span>🔺</span>
-Triangle
 
-</button>
+    <button
+    class="tool advanced"
+    data-tool="circle">
 
-<button
-class="tool advanced"
-data-tool="star">
+        <span>⭕</span>
+        Circle
 
-<span>⭐</span>
-Star
+    </button>
 
-</button>
+
+    <button
+    class="tool advanced"
+    data-tool="rectangle">
+
+        <span>▭</span>
+        Box
+
+    </button>
+
+
+    <button
+    class="tool advanced"
+    data-tool="triangle">
+
+        <span>🔺</span>
+        Triangle
+
+    </button>
+
+
+    <button
+    class="tool advanced"
+    data-tool="star">
+
+        <span>⭐</span>
+        Star
+
+    </button>
 
 </div>
+
 
 <!-- SETTINGS -->
 
 <div class="settings">
 
-<label>🎨</label>
+    <label>🎨</label>
 
-<input
-type="color"
-id="colorPicker"
-value="#222222">
+    <input
+    type="color"
+    id="colorPicker"
+    value="#303030">
 
-<label>📏</label>
 
-<input
-type="range"
-id="sizeSlider"
-min="1"
-max="40"
-value="5">
+    <label>📏</label>
 
-<input
-type="color"
-id="boardColor"
-value="#e6e7eb">
+    <input
+    type="range"
+    id="sizeSlider"
+    min="1"
+    max="40"
+    value="5">
+
+
+    <input
+    type="color"
+    id="boardColor"
+    value="#e4e6ea">
 
 </div>
+
 
 <!-- ACTIONS -->
 
 <div class="actions">
 
-<button
-class="action"
-onclick="undo()">
+    <button
+    class="action"
+    onclick="undo()">
+        ↩ Undo
+    </button>
 
-↩ Undo
 
-</button>
+    <button
+    class="action"
+    onclick="redo()">
+        ↪ Redo
+    </button>
 
-<button
-class="action"
-onclick="redo()">
 
-↪ Redo
+    <button
+    class="action"
+    onclick="exportBoard()">
+        💾 Save
+    </button>
 
-</button>
 
-<button
-class="action"
-onclick="exportBoard()">
+    <button
+    class="action"
+    onclick="clearBoard()">
+        🗑 Clear
+    </button>
 
-💾 Save
 
-</button>
-
-<button
-class="action"
-onclick="clearBoard()">
-
-🗑 Clear
-
-</button>
-
-<button
-class="action"
-onclick="toggleEmojiPanel()">
-
-😀 Emoji
-
-</button>
+    <button
+    class="action"
+    onclick="toggleEmojiPanel()">
+        😀 Emoji
+    </button>
 
 </div>
-
-</div>
+```
 
 </div>
 
 <script>
 
-/* =================================
+/* =========================================
    ELEMENTS
-================================= */
+========================================= */
+
+const board =
+document.getElementById("board");
 
 const canvas =
 document.getElementById("canvas");
 
 const ctx =
-canvas.getContext("2d");
+canvas.getContext("2d",{
+    willReadFrequently:true
+});
 
-const board =
-document.getElementById("board");
+const selectionBox =
+document.getElementById("selectionBox");
+
+const selectedCanvas =
+document.getElementById("selectedCanvas");
+
+const selectedCtx =
+selectedCanvas.getContext("2d");
 
 const colorPicker =
 document.getElementById("colorPicker");
@@ -871,9 +1237,9 @@ const objectMenu =
 document.getElementById("objectMenu");
 
 
-/* =================================
+/* =========================================
    STATE
-================================= */
+========================================= */
 
 let currentTool =
 "pencil";
@@ -890,36 +1256,63 @@ let lastY = 0;
 let savedImage =
 null;
 
-let history = [];
-let redoHistory = [];
 
-let selectedObject =
+/* SELECT MODE */
+
+let selecting =
+false;
+
+let selectionStartX = 0;
+let selectionStartY = 0;
+
+let selectionData =
 null;
 
 
-/* =================================
-   RESIZE
-================================= */
+/* MOVE SELECTED DRAWING */
+
+let movingSelection =
+false;
+
+let moveOffsetX = 0;
+let moveOffsetY = 0;
+
+
+/* HISTORY */
+
+let history = [];
+let redoHistory = [];
+
+
+/* =========================================
+   RESIZE CANVAS
+========================================= */
 
 function resizeCanvas(){
 
-    const oldCanvas =
+    const temp =
     document.createElement("canvas");
 
-    oldCanvas.width =
+    temp.width =
     canvas.width;
 
-    oldCanvas.height =
+    temp.height =
     canvas.height;
 
-    const oldCtx =
-    oldCanvas.getContext("2d");
+    const tempCtx =
+    temp.getContext("2d");
 
-    oldCtx.drawImage(
-        canvas,
-        0,
-        0
-    );
+    if(
+    canvas.width > 0
+    ){
+
+        tempCtx.drawImage(
+            canvas,
+            0,
+            0
+        );
+
+    }
 
 
     canvas.width =
@@ -929,10 +1322,12 @@ function resizeCanvas(){
     board.clientHeight;
 
 
-    if(oldCanvas.width > 0){
+    if(
+    temp.width > 0
+    ){
 
         ctx.drawImage(
-            oldCanvas,
+            temp,
             0,
             0,
             canvas.width,
@@ -943,6 +1338,7 @@ function resizeCanvas(){
 
 }
 
+
 resizeCanvas();
 
 window.addEventListener(
@@ -951,31 +1347,76 @@ resizeCanvas
 );
 
 
-/* =================================
+/* =========================================
+   GET POSITION
+========================================= */
+
+function getPosition(event){
+
+    const rect =
+    canvas.getBoundingClientRect();
+
+    return{
+
+        x:
+        (event.clientX - rect.left)
+        *
+        (
+            canvas.width /
+            rect.width
+        ),
+
+        y:
+        (event.clientY - rect.top)
+        *
+        (
+            canvas.height /
+            rect.height
+        )
+
+    };
+
+}
+
+
+/* =========================================
    TOOL SELECT
-================================= */
+========================================= */
 
 document
 .querySelectorAll(".tool")
-.forEach(button => {
+.forEach(button=>{
 
     button.addEventListener(
     "click",
-    () => {
+    ()=>{
 
         currentTool =
         button.dataset.tool;
 
+
         document
         .querySelectorAll(".tool")
-        .forEach(b =>
-        b.classList.remove(
-        "active"
-        ));
+        .forEach(btn=>{
 
-        button
-        .classList
+            btn.classList
+            .remove("active");
+
+        });
+
+
+        button.classList
         .add("active");
+
+
+        if(
+        currentTool !==
+        "select"
+        ){
+
+            deselectAll();
+
+        }
 
 
         if(
@@ -992,44 +1433,64 @@ document
 });
 
 
-/* =================================
-   POSITION
-================================= */
-
-function getPosition(event){
-
-    const rect =
-    canvas.getBoundingClientRect();
-
-    return{
-
-        x:
-        (event.clientX - rect.left)
-        *
-        (canvas.width / rect.width),
-
-        y:
-        (event.clientY - rect.top)
-        *
-        (canvas.height / rect.height)
-
-    };
-
-}
-
-
-/* =================================
-   POINTER DOWN
-================================= */
+/* =========================================
+   POINTER DOWN ON MAIN CANVAS
+========================================= */
 
 canvas.addEventListener(
 "pointerdown",
-event => {
+event=>{
+
+    event.preventDefault();
+
+
+    const pos =
+    getPosition(event);
+
+
+    /* =====================================
+       SELECT MODE
+    ===================================== */
 
     if(
     currentTool ===
     "select"
-    ||
+    ){
+
+        deselectAll();
+
+
+        selecting =
+        true;
+
+
+        selectionStartX =
+        pos.x;
+
+        selectionStartY =
+        pos.y;
+
+
+        selectionBox.style.display =
+        "block";
+
+
+        updateSelectionBox(
+            pos.x,
+            pos.y,
+            0,
+            0
+        );
+
+
+        return;
+
+    }
+
+
+    /* EMOJI MODE DOES NOT DRAW */
+
+    if(
     currentTool ===
     "emoji"
     ){
@@ -1038,17 +1499,17 @@ event => {
 
     }
 
-    event.preventDefault();
+
+    /* NORMAL DRAWING */
 
     drawing =
     true;
 
+
     canvas.setPointerCapture(
-    event.pointerId
+        event.pointerId
     );
 
-    const pos =
-    getPosition(event);
 
     startX =
     pos.x;
@@ -1056,61 +1517,112 @@ event => {
     startY =
     pos.y;
 
+
     lastX =
     pos.x;
 
     lastY =
     pos.y;
 
+
     savedImage =
     ctx.getImageData(
-    0,
-    0,
-    canvas.width,
-    canvas.height
+        0,
+        0,
+        canvas.width,
+        canvas.height
     );
 
 });
 
 
-/* =================================
+/* =========================================
    POINTER MOVE
-================================= */
+========================================= */
 
 canvas.addEventListener(
 "pointermove",
-event => {
-
-    if(!drawing) return;
-
-    event.preventDefault();
+event=>{
 
     const pos =
     getPosition(event);
 
 
-    /* PENCIL */
+    /* =====================================
+       CREATE SELECTION
+    ===================================== */
+
+    if(
+    selecting
+    ){
+
+        const x =
+        Math.min(
+            selectionStartX,
+            pos.x
+        );
+
+        const y =
+        Math.min(
+            selectionStartY,
+            pos.y
+        );
+
+        const width =
+        Math.abs(
+            pos.x -
+            selectionStartX
+        );
+
+        const height =
+        Math.abs(
+            pos.y -
+            selectionStartY
+        );
+
+
+        updateSelectionBox(
+            x,
+            y,
+            width,
+            height
+        );
+
+        return;
+
+    }
+
+
+    if(!drawing)
+    return;
+
+
+    /* =====================================
+       PENCIL
+    ===================================== */
 
     if(
     currentTool ===
     "pencil"
     ){
 
+        ctx.save();
+
         ctx.beginPath();
 
         ctx.moveTo(
-        lastX,
-        lastY
+            lastX,
+            lastY
         );
 
         ctx.lineTo(
-        pos.x,
-        pos.y
+            pos.x,
+            pos.y
         );
 
         ctx.lineWidth =
         Number(
-        sizeSlider.value
+            sizeSlider.value
         );
 
         ctx.strokeStyle =
@@ -1127,6 +1639,9 @@ event => {
 
         ctx.stroke();
 
+        ctx.restore();
+
+
         lastX =
         pos.x;
 
@@ -1138,43 +1653,106 @@ event => {
     }
 
 
-    /* BRUSH */
+    /* =====================================
+       BRUSH
+       SOFT SMOOTH SHADED EFFECT
+    ===================================== */
 
     if(
     currentTool ===
     "brush"
     ){
 
+        ctx.save();
+
+
         ctx.beginPath();
 
         ctx.moveTo(
-        lastX,
-        lastY
+            lastX,
+            lastY
         );
 
         ctx.lineTo(
-        pos.x,
-        pos.y
+            pos.x,
+            pos.y
         );
+
+
+        /*
+           MAIN SOFT BRUSH
+        */
 
         ctx.lineWidth =
         Number(
-        sizeSlider.value
-        ) * 2;
+            sizeSlider.value
+        ) * 2.3;
+
 
         ctx.strokeStyle =
         colorPicker.value;
 
-        ctx.globalAlpha =
-        .55;
 
         ctx.lineCap =
         "round";
 
-        ctx.stroke();
+        ctx.lineJoin =
+        "round";
+
 
         ctx.globalAlpha =
-        1;
+        .30;
+
+
+        ctx.shadowColor =
+        colorPicker.value;
+
+
+        ctx.shadowBlur =
+        Number(
+            sizeSlider.value
+        ) * 1.5;
+
+
+        ctx.stroke();
+
+
+        /*
+           CENTER SMOOTH COLOR
+        */
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            lastX,
+            lastY
+        );
+
+        ctx.lineTo(
+            pos.x,
+            pos.y
+        );
+
+
+        ctx.lineWidth =
+        Number(
+            sizeSlider.value
+        ) * 1.25;
+
+
+        ctx.globalAlpha =
+        .55;
+
+
+        ctx.shadowBlur =
+        0;
+
+
+        ctx.stroke();
+
+
+        ctx.restore();
+
 
         lastX =
         pos.x;
@@ -1187,7 +1765,10 @@ event => {
     }
 
 
-    /* ERASER */
+    /* =====================================
+       ERASER
+       ONLY ERASES WHILE DRAGGING
+    ===================================== */
 
     if(
     currentTool ===
@@ -1196,32 +1777,43 @@ event => {
 
         ctx.save();
 
+
         ctx.globalCompositeOperation =
         "destination-out";
+
 
         ctx.beginPath();
 
         ctx.moveTo(
-        lastX,
-        lastY
+            lastX,
+            lastY
         );
 
         ctx.lineTo(
-        pos.x,
-        pos.y
+            pos.x,
+            pos.y
         );
+
 
         ctx.lineWidth =
         Number(
-        sizeSlider.value
+            sizeSlider.value
         ) * 3;
+
 
         ctx.lineCap =
         "round";
 
+
+        ctx.lineJoin =
+        "round";
+
+
         ctx.stroke();
 
+
         ctx.restore();
+
 
         lastX =
         pos.x;
@@ -1234,70 +1826,564 @@ event => {
     }
 
 
+    /* =====================================
+       SHAPES
+    ===================================== */
+
     drawShape(
-    pos.x,
-    pos.y
+        pos.x,
+        pos.y
     );
 
 });
 
 
-/* =================================
+/* =========================================
    POINTER UP
-================================= */
+========================================= */
 
-function stopDrawing(){
+canvas.addEventListener(
+"pointerup",
+event=>{
 
-    if(!drawing) return;
+
+    /* =====================================
+       FINISH SELECTION
+    ===================================== */
+
+    if(
+    selecting
+    ){
+
+        selecting =
+        false;
+
+
+        const pos =
+        getPosition(event);
+
+
+        createSelectedObject(
+            selectionStartX,
+            selectionStartY,
+            pos.x,
+            pos.y
+        );
+
+
+        return;
+
+    }
+
+
+    /* NORMAL DRAWING */
+
+    if(drawing){
+
+        drawing =
+        false;
+
+        saveHistory();
+
+    }
+
+});
+
+
+canvas.addEventListener(
+"pointercancel",
+()=>{
 
     drawing =
     false;
+
+    selecting =
+    false;
+
+});
+
+
+/* =========================================
+   SELECTION BOX UPDATE
+========================================= */
+
+function updateSelectionBox(
+x,
+y,
+width,
+height
+){
+
+    selectionBox.style.left =
+    x + "px";
+
+
+    selectionBox.style.top =
+    y + "px";
+
+
+    selectionBox.style.width =
+    width + "px";
+
+
+    selectionBox.style.height =
+    height + "px";
+
+}
+
+
+/* =========================================
+   CREATE MOVABLE SELECTED AREA
+========================================= */
+
+function createSelectedObject(
+x1,
+y1,
+x2,
+y2
+){
+
+    const x =
+    Math.floor(
+        Math.min(x1,x2)
+    );
+
+    const y =
+    Math.floor(
+        Math.min(y1,y2)
+    );
+
+
+    const width =
+    Math.floor(
+        Math.abs(x2-x1)
+    );
+
+
+    const height =
+    Math.floor(
+        Math.abs(y2-y1)
+    );
+
+
+    /* TOO SMALL */
+
+    if(
+    width < 8 ||
+    height < 8
+    ){
+
+        selectionBox.style.display =
+        "none";
+
+        return;
+
+    }
+
+
+    /*
+       COPY SELECTED AREA
+    */
+
+    const imageData =
+    ctx.getImageData(
+        x,
+        y,
+        width,
+        height
+    );
+
+
+    selectionData =
+    {
+        x,
+        y,
+        width,
+        height,
+        imageData
+    };
+
+
+    /*
+       REMOVE FROM MAIN BOARD
+    */
+
+    ctx.clearRect(
+        x,
+        y,
+        width,
+        height
+    );
+
+
+    /*
+       CREATE MOVABLE CANVAS
+    */
+
+    selectedCanvas.width =
+    width;
+
+    selectedCanvas.height =
+    height;
+
+
+    selectedCtx.putImageData(
+        imageData,
+        0,
+        0
+    );
+
+
+    selectedCanvas.style.left =
+    x + "px";
+
+    selectedCanvas.style.top =
+    y + "px";
+
+
+    selectedCanvas.style.display =
+    "block";
+
+
+    selectionBox.style.display =
+    "none";
+
+
+    showObjectMenu(
+        x,
+        y
+    );
+
+
+}
+
+
+/* =========================================
+   MOVE SELECTED DRAWING
+========================================= */
+
+selectedCanvas.addEventListener(
+"pointerdown",
+event=>{
+
+    event.preventDefault();
+
+    event.stopPropagation();
+
+
+    if(
+    currentTool !==
+    "select"
+    )
+    return;
+
+
+    movingSelection =
+    true;
+
+
+    selectedCanvas.classList
+    .add("dragging");
+
+
+    const rect =
+    selectedCanvas.getBoundingClientRect();
+
+
+    moveOffsetX =
+    event.clientX -
+    rect.left;
+
+
+    moveOffsetY =
+    event.clientY -
+    rect.top;
+
+
+    selectedCanvas
+    .setPointerCapture(
+        event.pointerId
+    );
+
+});
+
+
+selectedCanvas.addEventListener(
+"pointermove",
+event=>{
+
+    if(!movingSelection)
+    return;
+
+
+    const boardRect =
+    board.getBoundingClientRect();
+
+
+    let x =
+    event.clientX -
+    boardRect.left -
+    moveOffsetX;
+
+
+    let y =
+    event.clientY -
+    boardRect.top -
+    moveOffsetY;
+
+
+    /*
+       KEEP INSIDE BOARD
+    */
+
+    x =
+    Math.max(
+        0,
+        Math.min(
+            x,
+            board.clientWidth -
+            selectedCanvas.width
+        )
+    );
+
+
+    y =
+    Math.max(
+        0,
+        Math.min(
+            y,
+            board.clientHeight -
+            selectedCanvas.height
+        )
+    );
+
+
+    selectedCanvas.style.left =
+    x + "px";
+
+
+    selectedCanvas.style.top =
+    y + "px";
+
+
+    showObjectMenu(
+        x,
+        y
+    );
+
+});
+
+
+selectedCanvas.addEventListener(
+"pointerup",
+()=>{
+
+    movingSelection =
+    false;
+
+
+    selectedCanvas.classList
+    .remove("dragging");
+
+});
+
+
+/* =========================================
+   FINALIZE SELECTION
+========================================= */
+
+function placeSelectionOnBoard(){
+
+    if(
+    selectedCanvas.style.display !==
+    "block"
+    )
+    return;
+
+
+    const x =
+    parseFloat(
+        selectedCanvas.style.left
+    );
+
+
+    const y =
+    parseFloat(
+        selectedCanvas.style.top
+    );
+
+
+    ctx.drawImage(
+        selectedCanvas,
+        x,
+        y
+    );
+
+
+    selectedCanvas.style.display =
+    "none";
+
+
+    selectionData =
+    null;
+
+
+    objectMenu.style.display =
+    "none";
+
 
     saveHistory();
 
 }
 
-canvas.addEventListener(
-"pointerup",
-stopDrawing
-);
 
-canvas.addEventListener(
-"pointercancel",
-stopDrawing
-);
+/* =========================================
+   DELETE SELECTED
+========================================= */
+
+function deleteSelected(){
 
 
-/* =================================
+    /*
+       DELETE MOVABLE DRAWING
+    */
+
+    if(
+    selectedCanvas.style.display ===
+    "block"
+    ){
+
+        selectedCanvas.style.display =
+        "none";
+
+        objectMenu.style.display =
+        "none";
+
+        selectionData =
+        null;
+
+        saveHistory();
+
+        return;
+
+    }
+
+
+    /*
+       DELETE EMOJI
+    */
+
+    if(
+    selectedEmoji
+    ){
+
+        selectedEmoji.remove();
+
+        selectedEmoji =
+        null;
+
+        objectMenu.style.display =
+        "none";
+
+    }
+
+}
+
+
+/* =========================================
+   DESELECT / DONE
+========================================= */
+
+function deselectAll(){
+
+
+    /*
+       PLACE DRAWING BACK
+    */
+
+    if(
+    selectedCanvas.style.display ===
+    "block"
+    ){
+
+        placeSelectionOnBoard();
+
+    }
+
+
+    /*
+       EMOJI
+    */
+
+    document
+    .querySelectorAll(
+        ".emoji-object"
+    )
+    .forEach(e=>{
+
+        e.classList
+        .remove("selected");
+
+    });
+
+
+    selectedEmoji =
+    null;
+
+
+    selectionBox.style.display =
+    "none";
+
+
+    objectMenu.style.display =
+    "none";
+
+}
+
+
+/* =========================================
    SHAPES
-================================= */
+========================================= */
 
 function drawShape(x,y){
 
     ctx.putImageData(
-    savedImage,
-    0,
-    0
+        savedImage,
+        0,
+        0
     );
 
+
+    ctx.save();
+
+
     ctx.beginPath();
+
 
     ctx.strokeStyle =
     colorPicker.value;
 
+
     ctx.lineWidth =
     Number(
-    sizeSlider.value
+        sizeSlider.value
     );
+
 
     ctx.lineCap =
     "round";
 
+
+    ctx.lineJoin =
+    "round";
+
+
     const w =
-    x - startX;
+    x-startX;
+
 
     const h =
-    y - startY;
+    y-startY;
 
 
     /* LINE */
@@ -1308,13 +2394,13 @@ function drawShape(x,y){
     ){
 
         ctx.moveTo(
-        startX,
-        startY
+            startX,
+            startY
         );
 
         ctx.lineTo(
-        x,
-        y
+            x,
+            y
         );
 
         ctx.stroke();
@@ -1330,10 +2416,10 @@ function drawShape(x,y){
     ){
 
         ctx.strokeRect(
-        startX,
-        startY,
-        w,
-        h
+            startX,
+            startY,
+            w,
+            h
         );
 
     }
@@ -1348,17 +2434,19 @@ function drawShape(x,y){
 
         const radius =
         Math.sqrt(
-        w*w +
-        h*h
+            w*w +
+            h*h
         );
 
+
         ctx.arc(
-        startX,
-        startY,
-        radius,
-        0,
-        Math.PI * 2
+            startX,
+            startY,
+            radius,
+            0,
+            Math.PI*2
         );
+
 
         ctx.stroke();
 
@@ -1373,21 +2461,25 @@ function drawShape(x,y){
     ){
 
         ctx.moveTo(
-        startX + w/2,
-        startY
+            startX + w/2,
+            startY
         );
 
-        ctx.lineTo(
-        startX,
-        startY + h
-        );
 
         ctx.lineTo(
-        startX + w,
-        startY + h
+            startX,
+            startY+h
         );
+
+
+        ctx.lineTo(
+            startX+w,
+            startY+h
+        );
+
 
         ctx.closePath();
+
 
         ctx.stroke();
 
@@ -1401,25 +2493,15 @@ function drawShape(x,y){
     "star"
     ){
 
-        const cx =
-        startX +
-        w/2;
-
-        const cy =
-        startY +
-        h/2;
-
-        const radius =
-        Math.max(
-        Math.abs(w),
-        Math.abs(h)
-        ) / 2;
-
         drawStar(
-        cx,
-        cy,
-        radius
+            startX+w/2,
+            startY+h/2,
+            Math.max(
+                Math.abs(w),
+                Math.abs(h)
+            )/2
         );
+
 
         ctx.stroke();
 
@@ -1434,20 +2516,23 @@ function drawShape(x,y){
     ){
 
         drawArrow(
-        startX,
-        startY,
-        x,
-        y
+            startX,
+            startY,
+            x,
+            y
         );
 
     }
 
+
+    ctx.restore();
+
 }
 
 
-/* =================================
+/* =========================================
    STAR
-================================= */
+========================================= */
 
 function drawStar(
 cx,
@@ -1457,6 +2542,7 @@ radius
 
     const inner =
     radius*.45;
+
 
     for(
     let i=0;
@@ -1468,6 +2554,7 @@ radius
         -Math.PI/2 +
         i*Math.PI/5;
 
+
         const r =
         i%2===0
         ?
@@ -1475,13 +2562,16 @@ radius
         :
         inner;
 
+
         const x =
         cx +
         Math.cos(angle)*r;
 
+
         const y =
         cy +
         Math.sin(angle)*r;
+
 
         if(i===0){
 
@@ -1497,14 +2587,15 @@ radius
 
     }
 
+
     ctx.closePath();
 
 }
 
 
-/* =================================
+/* =========================================
    ARROW
-================================= */
+========================================= */
 
 function drawArrow(
 x1,
@@ -1515,128 +2606,127 @@ y2
 
     const angle =
     Math.atan2(
-    y2-y1,
-    x2-x1
+        y2-y1,
+        x2-x1
     );
+
 
     const head =
     18;
 
+
     ctx.moveTo(
-    x1,
-    y1
+        x1,
+        y1
     );
+
 
     ctx.lineTo(
-    x2,
-    y2
+        x2,
+        y2
     );
 
-    ctx.moveTo(
-    x2,
-    y2
-    );
 
     ctx.lineTo(
 
-    x2 -
-    head *
-    Math.cos(
-    angle -
-    Math.PI/6
-    ),
+        x2 -
+        head *
+        Math.cos(
+            angle-Math.PI/6
+        ),
 
-    y2 -
-    head *
-    Math.sin(
-    angle -
-    Math.PI/6
-    )
+        y2 -
+        head *
+        Math.sin(
+            angle-Math.PI/6
+        )
 
     );
 
 
     ctx.moveTo(
-    x2,
-    y2
+        x2,
+        y2
     );
+
 
     ctx.lineTo(
 
-    x2 -
-    head *
-    Math.cos(
-    angle +
-    Math.PI/6
-    ),
+        x2 -
+        head *
+        Math.cos(
+            angle+Math.PI/6
+        ),
 
-    y2 -
-    head *
-    Math.sin(
-    angle +
-    Math.PI/6
-    )
+        y2 -
+        head *
+        Math.sin(
+            angle+Math.PI/6
+        )
 
     );
+
 
     ctx.stroke();
 
 }
 
 
-/* =================================
+/* =========================================
    EMOJIS
-================================= */
+========================================= */
 
-const emojis = [
+const emojis=[
 
-"😀","😃","😄","😁","😂",
-"🤣","😊","😍","🥰","😎",
-"🤩","🥳","😭","😡","😴",
+"😀","😃","😄","😁",
+"😂","🤣","😊","😍",
+"🥰","😎","🤩","🥳",
 
-"👍","👏","🙌","💪","🙏",
+"😭","😡","😴","🤔",
 
-"❤️","💙","💜","💚","💛",
+"👍","👏","🙌","💪",
+"🙏","❤️","💙","💜",
 
-"🔥","✨","⭐","🌈","☀️",
+"💚","💛","🔥","✨",
+"⭐","🌈","☀️","🌙",
 
-"🌙","🌸","🌹","🍀",
+"🌸","🌹","🍀","🦋",
+"🐶","🐱","🐦","🚀",
 
-"🐶","🐱","🦋","🐦",
+"🎈","🎉","🎂","🍕",
+"🍔","⚽","🏆","🎮",
 
-"🚀","🎈","🎉","🎂",
-
-"🍕","🍔","⚽","🏆",
-
-"🎮","📚","✏️"
+"📚","✏️"
 
 ];
 
 
-emojis.forEach(emoji => {
+emojis.forEach(emoji=>{
 
     const button =
-    document.createElement(
-    "button"
-    );
+    document.createElement("button");
+
 
     button.className =
     "emoji";
 
+
     button.textContent =
     emoji;
 
+
     button.onclick =
-    () => {
+    ()=>{
 
         addEmoji(
-        emoji
+            emoji
         );
 
     };
 
+
     emojiPanel.appendChild(
-    button
+        button
     );
 
 });
@@ -1644,38 +2734,48 @@ emojis.forEach(emoji => {
 
 function toggleEmojiPanel(){
 
-    emojiPanel
-    .classList
+    emojiPanel.classList
     .toggle("show");
 
 }
 
 
-/* =================================
-   ADD EMOJI
-================================= */
+/* =========================================
+   EMOJI MOVE
+========================================= */
+
+let selectedEmoji =
+null;
+
 
 function addEmoji(emoji){
 
     const element =
-    document.createElement(
-    "div"
-    );
+    document.createElement("div");
+
 
     element.className =
     "emoji-object";
 
+
     element.textContent =
     emoji;
+
 
     element.style.left =
     "50%";
 
+
     element.style.top =
     "50%";
 
+
+    element.style.transform =
+    "translate(-50%,-50%)";
+
+
     board.appendChild(
-    element
+        element
     );
 
 
@@ -1691,57 +2791,75 @@ function addEmoji(emoji){
 
     element.addEventListener(
     "pointerdown",
-    event => {
+    event=>{
 
         if(
         currentTool !==
         "select"
-        ){
+        )
+        return;
 
-            return;
-
-        }
 
         event.preventDefault();
 
         event.stopPropagation();
 
-        selectedObject =
+
+        deselectAll();
+
+
+        selectedEmoji =
         element;
+
 
         document
         .querySelectorAll(
-        ".emoji-object"
+            ".emoji-object"
         )
-        .forEach(
-        e =>
-        e.classList.remove(
-        "selected"
-        )
-        );
+        .forEach(e=>{
 
-        element
-        .classList
-        .add(
-        "selected"
-        );
+            e.classList
+            .remove("selected");
+
+        });
+
+
+        element.classList
+        .add("selected");
+
 
         dragging =
         true;
 
+
         const rect =
         element.getBoundingClientRect();
+
 
         offsetX =
         event.clientX -
         rect.left;
 
+
         offsetY =
         event.clientY -
         rect.top;
 
-        showObjectMenu(
+
         element
+        .setPointerCapture(
+            event.pointerId
+        );
+
+
+        showObjectMenu(
+            parseFloat(
+                element.style.left
+            ) || 0,
+
+            parseFloat(
+                element.style.top
+            ) || 0
         );
 
     });
@@ -1749,35 +2867,51 @@ function addEmoji(emoji){
 
     element.addEventListener(
     "pointermove",
-    event => {
+    event=>{
 
         if(!dragging)
         return;
 
-        const rect =
+
+        const boardRect =
         board.getBoundingClientRect();
 
-        element.style.left =
+
+        let x =
         event.clientX -
-        rect.left -
-        offsetX +
-        "px";
+        boardRect.left -
+        offsetX;
+
+
+        let y =
+        event.clientY -
+        boardRect.top -
+        offsetY;
+
+
+        element.style.left =
+        x+"px";
+
 
         element.style.top =
-        event.clientY -
-        rect.top -
-        offsetY +
-        "px";
+        y+"px";
+
 
         element.style.transform =
         "none";
+
+
+        showObjectMenu(
+            x,
+            y
+        );
 
     });
 
 
     element.addEventListener(
     "pointerup",
-    () => {
+    ()=>{
 
         dragging =
         false;
@@ -1787,84 +2921,83 @@ function addEmoji(emoji){
 }
 
 
-/* =================================
+/* =========================================
    OBJECT MENU
-================================= */
+========================================= */
 
-function showObjectMenu(
-element
-){
-
-    const rect =
-    element.getBoundingClientRect();
-
-    const boardRect =
-    board.getBoundingClientRect();
+function showObjectMenu(x,y){
 
     objectMenu.style.display =
     "flex";
 
-    objectMenu.style.left =
-    rect.left -
-    boardRect.left +
-    "px";
 
-    objectMenu.style.top =
-    rect.top -
-    boardRect.top -
-    40 +
-    "px";
-
-}
+    const menuWidth =
+    120;
 
 
-function deleteSelected(){
+    let menuX =
+    x;
 
-    if(
-    selectedObject
-    ){
 
-        selectedObject.remove();
+    let menuY =
+    y-45;
 
-        selectedObject =
-        null;
 
-        objectMenu.style.display =
-        "none";
+    if(menuY<5){
+
+        menuY =
+        y+40;
 
     }
 
+
+    objectMenu.style.left =
+    Math.max(
+        5,
+        Math.min(
+            menuX,
+            board.clientWidth-menuWidth
+        )
+    )+"px";
+
+
+    objectMenu.style.top =
+    Math.max(
+        5,
+        menuY
+    )+"px";
+
 }
 
 
-/* =================================
+/* =========================================
    HISTORY
-================================= */
+========================================= */
 
 function saveHistory(){
 
     const data =
     canvas.toDataURL();
 
-    history.push(
-    data
-    );
+
+    history.push(data);
+
 
     if(
-    history.length >
-    30
+    history.length>40
     ){
 
         history.shift();
 
     }
 
-    redoHistory =
-    [];
+
+    redoHistory=[];
+
 
     localStorage.setItem(
-    "coolboard",
-    data
+        "coolboardDrawing",
+        data
     );
 
 }
@@ -1872,19 +3005,24 @@ function saveHistory(){
 
 function undo(){
 
+    deselectAll();
+
+
     if(
-    history.length < 2
+    history.length<2
     )
     return;
 
+
     redoHistory.push(
-    history.pop()
+        history.pop()
     );
 
+
     restoreImage(
-    history[
-    history.length-1
-    ]
+        history[
+            history.length-1
+        ]
     );
 
 }
@@ -1892,22 +3030,23 @@ function undo(){
 
 function redo(){
 
+    deselectAll();
+
+
     if(
-    redoHistory.length ===
-    0
+    redoHistory.length===0
     )
     return;
+
 
     const data =
     redoHistory.pop();
 
-    history.push(
-    data
-    );
 
-    restoreImage(
-    data
-    );
+    history.push(data);
+
+
+    restoreImage(data);
 
 }
 
@@ -1917,25 +3056,28 @@ function restoreImage(data){
     const image =
     new Image();
 
+
     image.onload =
-    () => {
+    ()=>{
 
         ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
+            0,
+            0,
+            canvas.width,
+            canvas.height
         );
 
+
         ctx.drawImage(
-        image,
-        0,
-        0,
-        canvas.width,
-        canvas.height
+            image,
+            0,
+            0,
+            canvas.width,
+            canvas.height
         );
 
     };
+
 
     image.src =
     data;
@@ -1943,46 +3085,50 @@ function restoreImage(data){
 }
 
 
-/* =================================
-   CLEAR
-================================= */
+/* =========================================
+   CLEAR BOARD
+========================================= */
 
 function clearBoard(){
 
     if(
     !confirm(
-    "বোর্ড পরিষ্কার করতে চাও?"
+        "বোর্ড সম্পূর্ণ পরিষ্কার করতে চাও?"
     )
     )
     return;
 
+
     ctx.clearRect(
-    0,
-    0,
-    canvas.width,
-    canvas.height
+        0,
+        0,
+        canvas.width,
+        canvas.height
     );
+
 
     document
     .querySelectorAll(
-    ".emoji-object"
+        ".emoji-object"
     )
-    .forEach(
-    e => e.remove()
-    );
+    .forEach(e=>e.remove());
+
+
+    deselectAll();
+
 
     saveHistory();
 
 }
 
 
-/* =================================
+/* =========================================
    BOARD COLOR
-================================= */
+========================================= */
 
 boardColor.addEventListener(
 "input",
-() => {
+()=>{
 
     board.style.background =
     boardColor.value;
@@ -1990,64 +3136,86 @@ boardColor.addEventListener(
 });
 
 
-/* =================================
+/* =========================================
    EXPORT
-================================= */
+========================================= */
 
 function exportBoard(){
 
+    deselectAll();
+
+
     const exportCanvas =
     document.createElement(
-    "canvas"
+        "canvas"
     );
+
 
     exportCanvas.width =
     canvas.width;
 
+
     exportCanvas.height =
     canvas.height;
 
+
     const exportCtx =
     exportCanvas.getContext(
-    "2d"
+        "2d"
     );
+
+
+    /* BOARD BACKGROUND */
 
     exportCtx.fillStyle =
     boardColor.value;
 
+
     exportCtx.fillRect(
-    0,
-    0,
-    exportCanvas.width,
-    exportCanvas.height
+        0,
+        0,
+        exportCanvas.width,
+        exportCanvas.height
     );
 
+
+    /* DRAWING */
+
     exportCtx.drawImage(
-    canvas,
-    0,
-    0
+        canvas,
+        0,
+        0
     );
+
+
+    /* EMOJIS NOT RENDERED PERFECTLY
+       INTO CANVAS ON EVERY DEVICE,
+       SO DRAWING IS EXPORTED.
+    */
 
 
     const link =
-    document.createElement(
-    "a"
-    );
+    document.createElement("a");
+
 
     link.download =
     "CoolBoard.png";
 
+
     link.href =
-    exportCanvas.toDataURL();
+    exportCanvas.toDataURL(
+        "image/png"
+    );
+
 
     link.click();
 
 }
 
 
-/* =================================
-   MODE
-================================= */
+/* =========================================
+   MODE SYSTEM
+========================================= */
 
 function setMode(
 mode,
@@ -2056,31 +3224,28 @@ button
 
     document
     .querySelectorAll(
-    ".mode-btn"
+        ".mode-btn"
     )
-    .forEach(
-    btn =>
-    btn.classList.remove(
-    "active"
-    )
-    );
+    .forEach(btn=>{
 
-    button
-    .classList
-    .add(
-    "active"
-    );
+        btn.classList
+        .remove("active");
+
+    });
+
+
+    button.classList
+    .add("active");
 
 
     document
     .querySelectorAll(
-    ".advanced"
+        ".advanced"
     )
-    .forEach(
-    tool => {
+    .forEach(tool=>{
 
         tool.style.display =
-        mode === "advanced"
+        mode==="advanced"
         ?
         "block"
         :
@@ -2088,14 +3253,89 @@ button
 
     });
 
+
+    if(
+    mode==="kids"
+    ){
+
+        /*
+           IF ADVANCED TOOL ACTIVE,
+           RETURN TO PENCIL
+        */
+
+        const activeTool =
+        document.querySelector(
+            ".tool.active"
+        );
+
+
+        if(
+        activeTool &&
+        activeTool.classList
+        .contains("advanced")
+        ){
+
+            currentTool =
+            "pencil";
+
+
+            document
+            .querySelectorAll(".tool")
+            .forEach(
+                t=>t.classList
+                .remove("active")
+            );
+
+
+            document
+            .querySelector(
+                '[data-tool="pencil"]'
+            )
+            .classList
+            .add("active");
+
+        }
+
+    }
+
 }
 
 
-/* =================================
-   START
-================================= */
+/* =========================================
+   INITIAL HISTORY
+========================================= */
 
 saveHistory();
+
+
+/* =========================================
+   LOAD SAVED DRAWING
+========================================= */
+
+const savedBoard =
+localStorage.getItem(
+    "coolboardDrawing"
+);
+
+
+if(savedBoard){
+
+    setTimeout(
+    ()=>{
+
+        restoreImage(
+            savedBoard
+        );
+
+        history=[
+            savedBoard
+        ];
+
+    },
+    100
+    );
+
+}
 
 </script>
 
