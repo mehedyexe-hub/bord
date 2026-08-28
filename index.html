@@ -1,0 +1,2936 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>NovaBoard — Interactive Whiteboard</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #070912;
+        --panel: #101526;
+        --panel2: #0c1120;
+        --border: #ffffff12;
+        --text: #edf1f8;
+        --muted: #8993a8;
+        --purple: #806cff;
+        --blue: #3b9cff;
+        --danger: #ff4d6d;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+      }
+
+      body {
+        overflow: hidden;
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+
+        background:
+          radial-gradient(circle at 10% 0%, #765cff20, transparent 35%),
+          radial-gradient(circle at 100% 100%, #1895ff18, transparent 35%),
+          var(--bg);
+
+        color: var(--text);
+      }
+
+      /* =========================
+   APP
+========================= */
+
+      .app {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* =========================
+   HEADER
+========================= */
+
+      .header {
+        height: 62px;
+        flex-shrink: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 0 14px;
+
+        background: #0b1020e8;
+        backdrop-filter: blur(18px);
+
+        border-bottom: 1px solid var(--border);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .logo {
+        width: 38px;
+        height: 38px;
+
+        display: grid;
+        place-items: center;
+
+        border-radius: 12px;
+
+        background: linear-gradient(135deg, #806cff, #379cff);
+
+        box-shadow: 0 10px 35px #6c5cff35;
+
+        font-size: 19px;
+      }
+
+      .brand-name {
+        font-size: 15px;
+        font-weight: 850;
+      }
+
+      .brand-sub {
+        color: #707b91;
+        font-size: 8px;
+        letter-spacing: 1px;
+        margin-top: 2px;
+      }
+
+      .header-buttons {
+        display: flex;
+        gap: 6px;
+      }
+
+      .header-btn {
+        width: 37px;
+        height: 37px;
+
+        border: 1px solid var(--border);
+        border-radius: 10px;
+
+        background: #ffffff07;
+        color: #fff;
+
+        cursor: pointer;
+
+        transition: 0.18s;
+      }
+
+      .header-btn:hover {
+        background: #ffffff12;
+        transform: translateY(-1px);
+      }
+
+      /* =========================
+   MAIN
+========================= */
+
+      .main {
+        flex: 1;
+        min-height: 0;
+
+        display: flex;
+        gap: 10px;
+
+        padding: 10px;
+      }
+
+      /* =========================
+   SIDEBAR
+========================= */
+
+      .sidebar {
+        width: 275px;
+        flex-shrink: 0;
+
+        overflow-y: auto;
+
+        border: 1px solid var(--border);
+        border-radius: 18px;
+
+        background: linear-gradient(180deg, #12192b, #0b101d);
+
+        box-shadow: 0 25px 70px #00000055;
+
+        padding: 10px;
+      }
+
+      .sidebar::-webkit-scrollbar {
+        width: 5px;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb {
+        background: #ffffff15;
+        border-radius: 20px;
+      }
+
+      .sidebar-title {
+        padding: 6px 6px 12px;
+
+        border-bottom: 1px solid #ffffff09;
+      }
+
+      .sidebar-title h2 {
+        font-size: 15px;
+      }
+
+      .sidebar-title p {
+        color: var(--muted);
+        font-size: 9px;
+        margin-top: 3px;
+      }
+
+      /* =========================
+   SECTIONS
+========================= */
+
+      .section {
+        padding: 11px 3px;
+
+        border-bottom: 1px solid #ffffff09;
+      }
+
+      .section-title {
+        color: #7f899d;
+
+        font-size: 9px;
+        font-weight: 800;
+
+        text-transform: uppercase;
+        letter-spacing: 1px;
+
+        margin-bottom: 8px;
+      }
+
+      .tool-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+
+        gap: 6px;
+      }
+
+      .tool {
+        min-height: 44px;
+
+        border: 1px solid #ffffff0c;
+        border-radius: 10px;
+
+        background: #ffffff06;
+
+        color: #e8ecf4;
+
+        font-size: 9px;
+
+        cursor: pointer;
+
+        transition: 0.16s;
+      }
+
+      .tool:hover {
+        background: #ffffff0e;
+        transform: translateY(-1px);
+      }
+
+      .tool.active {
+        background: linear-gradient(135deg, #806cff, #4d8df5);
+
+        border-color: transparent;
+
+        box-shadow: 0 8px 25px #7060ff30;
+      }
+
+      /* =========================
+   COLOR
+========================= */
+
+      .colors {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
+
+      .color {
+        width: 27px;
+        height: 27px;
+
+        border-radius: 50%;
+
+        border: 2px solid #c8cdd6;
+
+        cursor: pointer;
+
+        transition: 0.15s;
+      }
+
+      .color:hover {
+        transform: scale(1.15);
+      }
+
+      #customColor {
+        width: 29px;
+        height: 29px;
+
+        padding: 0;
+
+        border: 0;
+
+        border-radius: 50%;
+
+        cursor: pointer;
+      }
+
+      /* =========================
+   RANGE
+========================= */
+
+      .range-info {
+        display: flex;
+        justify-content: space-between;
+
+        font-size: 10px;
+        color: #8993a7;
+
+        margin-bottom: 6px;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        accent-color: var(--purple);
+      }
+
+      /* =========================
+   EMOJI
+========================= */
+
+      .emoji-box {
+        display: none;
+
+        margin-top: 8px;
+
+        padding: 8px;
+
+        border-radius: 12px;
+
+        background: #080c17;
+
+        border: 1px solid #ffffff0c;
+      }
+
+      .emoji-box.show {
+        display: block;
+      }
+
+      .emoji-tabs {
+        display: flex;
+        gap: 4px;
+
+        overflow-x: auto;
+
+        padding-bottom: 7px;
+      }
+
+      .emoji-tab {
+        min-width: 32px;
+        height: 30px;
+
+        border: 0;
+        border-radius: 8px;
+
+        background: #ffffff08;
+
+        color: #fff;
+
+        cursor: pointer;
+      }
+
+      .emoji-tab.active {
+        background: #806cff;
+      }
+
+      .emoji-grid {
+        display: grid;
+
+        grid-template-columns: repeat(7, 1fr);
+
+        gap: 3px;
+
+        max-height: 190px;
+
+        overflow-y: auto;
+      }
+
+      .emoji-item {
+        height: 31px;
+
+        border: 0;
+        border-radius: 7px;
+
+        background: transparent;
+
+        font-size: 18px;
+
+        cursor: pointer;
+      }
+
+      .emoji-item:hover {
+        background: #ffffff10;
+        transform: scale(1.12);
+      }
+
+      /* =========================
+   BOARD COLOR
+========================= */
+
+      .board-colors {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+      }
+
+      .board-color {
+        width: 31px;
+        height: 27px;
+
+        border-radius: 8px;
+
+        border: 1px solid #ffffff20;
+
+        cursor: pointer;
+
+        transition: 0.15s;
+      }
+
+      .board-color:hover {
+        transform: translateY(-2px);
+      }
+
+      #boardColorPicker {
+        width: 31px;
+        height: 27px;
+
+        padding: 0;
+
+        border: 0;
+
+        border-radius: 8px;
+
+        cursor: pointer;
+      }
+
+      /* =========================
+   BOARD AREA
+========================= */
+
+      .board-area {
+        flex: 1;
+        min-width: 0;
+        min-height: 0;
+
+        display: flex;
+        flex-direction: column;
+
+        gap: 8px;
+      }
+
+      /* =========================
+   BOARD TOOLBAR
+========================= */
+
+      .board-toolbar {
+        height: 43px;
+        flex-shrink: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 5px 8px;
+
+        border-radius: 12px;
+
+        background: #11172aee;
+
+        border: 1px solid var(--border);
+      }
+
+      .status {
+        color: #8c96aa;
+        font-size: 10px;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .zoom-controls {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .zoom-btn {
+        width: 29px;
+        height: 29px;
+
+        border: 1px solid #ffffff10;
+        border-radius: 8px;
+
+        background: #ffffff07;
+        color: #fff;
+
+        cursor: pointer;
+      }
+
+      .zoom-value {
+        width: 45px;
+
+        text-align: center;
+
+        color: #8993a7;
+        font-size: 10px;
+      }
+
+      /* =========================
+   ANIMATED BORDER
+========================= */
+
+      .board-frame {
+        flex: 1;
+        min-height: 0;
+
+        padding: 3px;
+
+        border-radius: 21px;
+
+        background: linear-gradient(
+          120deg,
+          #969da8,
+          #d0d4da,
+          #9aa2ad,
+          #dadde2,
+          #969da8
+        );
+
+        background-size: 300% 300%;
+
+        animation: borderFlow 8s linear infinite;
+
+        box-shadow: 0 25px 80px #00000070;
+      }
+
+      @keyframes borderFlow {
+        0% {
+          background-position: 0% 50%;
+        }
+
+        50% {
+          background-position: 100% 50%;
+        }
+
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      /* =========================
+   CANVAS
+========================= */
+
+      .canvas-wrap {
+        position: relative;
+
+        width: 100%;
+        height: 100%;
+
+        overflow: hidden;
+
+        border-radius: 18px;
+
+        background: #d4d8de;
+      }
+
+      #canvas {
+        position: absolute;
+
+        left: 0;
+        top: 0;
+
+        touch-action: none;
+
+        user-select: none;
+      }
+
+      /* =========================
+   FLOATING SELECTION TOOLBAR
+========================= */
+
+      .selection-toolbar {
+        position: absolute;
+
+        display: none;
+
+        z-index: 100;
+
+        padding: 5px;
+
+        gap: 4px;
+
+        border: 1px solid #ffffff20;
+
+        border-radius: 11px;
+
+        background: #10162aee;
+
+        backdrop-filter: blur(15px);
+
+        box-shadow: 0 15px 40px #00000055;
+
+        transform: translate(-50%, -115%);
+      }
+
+      .selection-toolbar.show {
+        display: flex;
+      }
+
+      .float-btn {
+        min-width: 34px;
+        height: 31px;
+
+        padding: 0 7px;
+
+        border: 1px solid #ffffff10;
+
+        border-radius: 8px;
+
+        background: #ffffff08;
+
+        color: #fff;
+
+        font-size: 10px;
+
+        cursor: pointer;
+      }
+
+      .float-btn:hover {
+        background: #ffffff15;
+      }
+
+      .float-delete {
+        color: #ff7189;
+      }
+
+      /* =========================
+   MOBILE
+========================= */
+
+      @media (max-width: 850px) {
+        body {
+          overflow: auto;
+        }
+
+        .app {
+          height: auto;
+          min-height: 100vh;
+        }
+
+        .main {
+          flex-direction: column;
+        }
+
+        .sidebar {
+          width: 100%;
+          max-height: 330px;
+        }
+
+        .board-area {
+          height: 600px;
+          flex-shrink: 0;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app">
+      <!-- HEADER -->
+
+      <header class="header">
+        <div class="brand">
+          <div class="logo">✦</div>
+
+          <div>
+            <div class="brand-name">NovaBoard</div>
+
+            <div class="brand-sub">SMART INTERACTIVE WHITEBOARD</div>
+          </div>
+        </div>
+
+        <div class="header-buttons">
+          <button
+            class="header-btn"
+            id="saveBtn"
+            title="Save"
+          >
+            💾
+          </button>
+
+          <button
+            class="header-btn"
+            id="exportBtn"
+            title="Export"
+          >
+            📥
+          </button>
+        </div>
+      </header>
+
+      <div class="main">
+        <!-- =========================
+     SIDEBAR
+========================= -->
+
+        <aside class="sidebar">
+          <div class="sidebar-title">
+            <h2>🎨 Whiteboard</h2>
+
+            <p>Draw • Mark • Move • Create</p>
+          </div>
+
+          <!-- DRAWING -->
+
+          <div class="section">
+            <div class="section-title">Drawing</div>
+
+            <div class="tool-grid">
+              <button
+                class="tool active"
+                data-tool="pencil"
+              >
+                ✏️ Pencil
+              </button>
+
+              <button
+                class="tool"
+                data-tool="brush"
+              >
+                🖌️ Brush
+              </button>
+
+              <button
+                class="tool"
+                data-tool="eraser"
+              >
+                🧽 Eraser
+              </button>
+
+              <button
+                class="tool"
+                data-tool="select"
+              >
+                🖱️ Select
+              </button>
+
+              <button
+                class="tool"
+                data-tool="lasso"
+              >
+                🪢 Mark
+              </button>
+
+              <button
+                class="tool"
+                id="emojiButton"
+              >
+                😀 Emoji
+              </button>
+            </div>
+
+            <!-- EMOJI -->
+
+            <div
+              class="emoji-box"
+              id="emojiBox"
+            >
+              <div class="emoji-tabs">
+                <button
+                  class="emoji-tab active"
+                  data-category="faces"
+                >
+                  😀
+                </button>
+
+                <button
+                  class="emoji-tab"
+                  data-category="animals"
+                >
+                  🐶
+                </button>
+
+                <button
+                  class="emoji-tab"
+                  data-category="food"
+                >
+                  🍕
+                </button>
+
+                <button
+                  class="emoji-tab"
+                  data-category="nature"
+                >
+                  🌈
+                </button>
+
+                <button
+                  class="emoji-tab"
+                  data-category="activity"
+                >
+                  ⚽
+                </button>
+
+                <button
+                  class="emoji-tab"
+                  data-category="objects"
+                >
+                  💡
+                </button>
+              </div>
+
+              <div
+                class="emoji-grid"
+                id="emojiGrid"
+              ></div>
+            </div>
+          </div>
+
+          <!-- COLOR -->
+
+          <div class="section">
+            <div class="section-title">Drawing Color</div>
+
+            <div class="colors">
+              <div
+                class="color"
+                data-color="#111827"
+                style="background: #111827"
+              ></div>
+
+              <div
+                class="color"
+                data-color="#ef4444"
+                style="background: #ef4444"
+              ></div>
+
+              <div
+                class="color"
+                data-color="#f97316"
+                style="background: #f97316"
+              ></div>
+
+              <div
+                class="color"
+                data-color="#eab308"
+                style="background: #eab308"
+              ></div>
+
+              <div
+                class="color"
+                data-color="#22c55e"
+                style="background: #22c55e"
+              ></div>
+
+              <div
+                class="color"
+                data-color="#06b6d4"
+                style="background: #06b6d4"
+              ></div>
+
+              <div
+                class="color"
+                data-color="#3b82f6"
+                style="background: #3b82f6"
+              ></div>
+
+              <div
+                class="color"
+                data-color="#8b5cf6"
+                style="background: #8b5cf6"
+              ></div>
+
+              <div
+                class="color"
+                data-color="#ec4899"
+                style="background: #ec4899"
+              ></div>
+
+              <input
+                type="color"
+                id="customColor"
+                value="#806cff"
+              />
+            </div>
+          </div>
+
+          <!-- SIZE -->
+
+          <div class="section">
+            <div class="section-title">Pen / Brush Size</div>
+
+            <div class="range-info">
+              <span> Stroke </span>
+
+              <b id="sizeValue"> 6px </b>
+            </div>
+
+            <input
+              type="range"
+              id="sizeRange"
+              min="1"
+              max="70"
+              value="6"
+            />
+          </div>
+
+          <!-- SHAPES -->
+
+          <div class="section">
+            <div class="section-title">Shapes</div>
+
+            <div class="tool-grid">
+              <button
+                class="tool"
+                data-tool="line"
+              >
+                ━ Line
+              </button>
+
+              <button
+                class="tool"
+                data-tool="rect"
+              >
+                ▭ Rectangle
+              </button>
+
+              <button
+                class="tool"
+                data-tool="circle"
+              >
+                ⭕ Circle
+              </button>
+
+              <button
+                class="tool"
+                data-tool="ellipse"
+              >
+                ◯ Ellipse
+              </button>
+
+              <button
+                class="tool"
+                data-tool="triangle"
+              >
+                △ Triangle
+              </button>
+
+              <button
+                class="tool"
+                data-tool="star"
+              >
+                ⭐ Star
+              </button>
+
+              <button
+                class="tool"
+                data-tool="arrow"
+              >
+                ➜ Arrow
+              </button>
+
+              <button
+                class="tool"
+                data-tool="diamond"
+              >
+                ◇ Diamond
+              </button>
+
+              <button
+                class="tool"
+                data-tool="hex"
+              >
+                ⬡ Hexagon
+              </button>
+
+              <button
+                class="tool"
+                data-tool="pentagon"
+              >
+                ⬠ Pentagon
+              </button>
+            </div>
+          </div>
+
+          <!-- BOARD -->
+
+          <div class="section">
+            <div class="section-title">Board Color</div>
+
+            <div class="board-colors">
+              <button
+                class="board-color"
+                data-board="#d4d8de"
+                style="background: #d4d8de"
+              ></button>
+
+              <button
+                class="board-color"
+                data-board="#cbd5e1"
+                style="background: #cbd5e1"
+              ></button>
+
+              <button
+                class="board-color"
+                data-board="#e2e8f0"
+                style="background: #e2e8f0"
+              ></button>
+
+              <button
+                class="board-color"
+                data-board="#c7d2fe"
+                style="background: #c7d2fe"
+              ></button>
+
+              <button
+                class="board-color"
+                data-board="#dbeafe"
+                style="background: #dbeafe"
+              ></button>
+
+              <button
+                class="board-color"
+                data-board="#1e293b"
+                style="background: #1e293b"
+              ></button>
+
+              <button
+                class="board-color"
+                data-board="#111827"
+                style="background: #111827"
+              ></button>
+
+              <input
+                type="color"
+                id="boardColorPicker"
+                value="#d4d8de"
+              />
+            </div>
+          </div>
+
+          <!-- ACTIONS -->
+
+          <div class="section">
+            <div class="section-title">Workspace</div>
+
+            <div class="tool-grid">
+              <button
+                class="tool"
+                id="gridBtn"
+              >
+                #️⃣ Grid
+              </button>
+
+              <button
+                class="tool"
+                id="undoBtn"
+              >
+                ↩️ Undo
+              </button>
+
+              <button
+                class="tool"
+                id="redoBtn"
+              >
+                ↪️ Redo
+              </button>
+
+              <button
+                class="tool"
+                id="clearBtn"
+              >
+                🗑️ Clear
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- =========================
+     BOARD
+========================= -->
+
+        <main class="board-area">
+          <div class="board-toolbar">
+            <div
+              class="status"
+              id="status"
+            >
+              ✏️ Pencil ready — draw anywhere
+            </div>
+
+            <div class="zoom-controls">
+              <button
+                class="zoom-btn"
+                id="zoomOut"
+              >
+                −
+              </button>
+
+              <span
+                class="zoom-value"
+                id="zoomValue"
+              >
+                100%
+              </span>
+
+              <button
+                class="zoom-btn"
+                id="zoomIn"
+              >
+                +
+              </button>
+
+              <button
+                class="zoom-btn"
+                id="resetZoom"
+              >
+                ⛶
+              </button>
+            </div>
+          </div>
+
+          <div class="board-frame">
+            <div
+              class="canvas-wrap"
+              id="canvasWrap"
+            >
+              <canvas id="canvas"></canvas>
+
+              <!-- FLOATING TOOLBAR -->
+
+              <div
+                class="selection-toolbar"
+                id="selectionToolbar"
+              >
+                <button
+                  class="float-btn"
+                  id="moveSelection"
+                >
+                  ↔ Move
+                </button>
+
+                <button
+                  class="float-btn"
+                  id="growSelection"
+                >
+                  ＋
+                </button>
+
+                <button
+                  class="float-btn"
+                  id="shrinkSelection"
+                >
+                  －
+                </button>
+
+                <button
+                  class="float-btn"
+                  id="colorSelection"
+                >
+                  🎨
+                </button>
+
+                <button
+                  class="float-btn float-delete"
+                  id="deleteSelection"
+                >
+                  🗑
+                </button>
+
+                <button
+                  class="float-btn"
+                  id="closeSelection"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      /* =====================================================
+   NOVABOARD ENGINE
+===================================================== */
+
+      const canvas = document.getElementById("canvas");
+
+      const ctx = canvas.getContext("2d");
+
+      const canvasWrap = document.getElementById("canvasWrap");
+
+      const selectionToolbar = document.getElementById("selectionToolbar");
+
+      /* =========================
+   STATE
+========================= */
+
+      let objects = [];
+
+      let currentTool = "pencil";
+
+      let currentColor = "#806cff";
+
+      let brushSize = 6;
+
+      let boardColor = "#d4d8de";
+
+      let gridEnabled = false;
+
+      let zoom = 1;
+
+      let drawing = false;
+
+      let activeObject = null;
+
+      let selectedObjects = [];
+
+      let lassoPoints = [];
+
+      let startPoint = null;
+
+      let undoStack = [];
+
+      let redoStack = [];
+
+      let movingSelection = false;
+
+      let moveStart = null;
+
+      /* =====================================================
+   SHAPE LIST
+===================================================== */
+
+      const shapeTools = [
+        "line",
+        "rect",
+        "circle",
+        "ellipse",
+        "triangle",
+        "star",
+        "arrow",
+        "diamond",
+        "hex",
+        "pentagon",
+      ];
+
+      /* =====================================================
+   CANVAS
+===================================================== */
+
+      function resizeCanvas() {
+        canvas.width = canvasWrap.clientWidth;
+
+        canvas.height = canvasWrap.clientHeight;
+
+        render();
+      }
+
+      resizeCanvas();
+
+      window.addEventListener("resize", resizeCanvas);
+
+      /* =====================================================
+   POINTER POSITION
+===================================================== */
+
+      function getPoint(e) {
+        const rect = canvas.getBoundingClientRect();
+
+        return {
+          x: (e.clientX - rect.left) / zoom,
+
+          y: (e.clientY - rect.top) / zoom,
+        };
+      }
+
+      /* =====================================================
+   STATUS
+===================================================== */
+
+      function setStatus(text) {
+        document.getElementById("status").textContent = "✨ " + text;
+      }
+
+      /* =====================================================
+   HISTORY
+===================================================== */
+
+      function makeSnapshot() {
+        return JSON.parse(JSON.stringify(objects));
+      }
+
+      function saveHistory() {
+        undoStack.push(makeSnapshot());
+
+        if (undoStack.length > 60) {
+          undoStack.shift();
+        }
+
+        redoStack = [];
+      }
+
+      /* =====================================================
+   AUTO SAVE
+===================================================== */
+
+      function autoSave() {
+        try {
+          localStorage.setItem("NovaBoardObjects", JSON.stringify(objects));
+
+          localStorage.setItem("NovaBoardColor", boardColor);
+        } catch (error) {
+          console.warn("Auto save failed", error);
+        }
+      }
+
+      function loadSaved() {
+        try {
+          const saved = localStorage.getItem("NovaBoardObjects");
+
+          const savedColor = localStorage.getItem("NovaBoardColor");
+
+          if (saved) {
+            objects = JSON.parse(saved);
+          }
+
+          if (savedColor) {
+            boardColor = savedColor;
+          }
+        } catch (error) {
+          objects = [];
+        }
+      }
+
+      loadSaved();
+
+      /* =====================================================
+   TOOL SELECTION
+===================================================== */
+
+      document.querySelectorAll("[data-tool]").forEach((button) => {
+        button.addEventListener("click", () => {
+          currentTool = button.dataset.tool;
+
+          document
+            .querySelectorAll("[data-tool]")
+            .forEach((b) => b.classList.remove("active"));
+
+          button.classList.add("active");
+
+          selectedObjects = [];
+
+          activeObject = null;
+
+          hideSelectionToolbar();
+
+          if (currentTool === "pencil") {
+            setStatus("Pencil ready");
+          } else if (currentTool === "brush") {
+            setStatus("Brush ready");
+          } else if (currentTool === "eraser") {
+            setStatus("Eraser — press and drag");
+          } else if (currentTool === "select") {
+            setStatus("Select — click and drag");
+          } else if (currentTool === "lasso") {
+            setStatus("Mark — draw around objects");
+          } else {
+            setStatus(button.textContent.trim());
+          }
+
+          render();
+        });
+      });
+
+      /* =====================================================
+   COLOR
+===================================================== */
+
+      document.querySelectorAll(".color").forEach((button) => {
+        button.addEventListener("click", () => {
+          currentColor = button.dataset.color;
+
+          changeSelectedColor();
+        });
+      });
+
+      document.getElementById("customColor").addEventListener("input", (e) => {
+        currentColor = e.target.value;
+
+        changeSelectedColor();
+      });
+
+      /* =====================================================
+   SIZE
+===================================================== */
+
+      const sizeRange = document.getElementById("sizeRange");
+
+      const sizeValue = document.getElementById("sizeValue");
+
+      sizeRange.addEventListener("input", () => {
+        brushSize = Number(sizeRange.value);
+
+        sizeValue.textContent = brushSize + "px";
+      });
+
+      /* =====================================================
+   BOARD COLOR
+===================================================== */
+
+      document.querySelectorAll(".board-color").forEach((button) => {
+        button.addEventListener("click", () => {
+          boardColor = button.dataset.board;
+
+          applyBoardColor();
+
+          autoSave();
+        });
+      });
+
+      document
+        .getElementById("boardColorPicker")
+        .addEventListener("input", (e) => {
+          boardColor = e.target.value;
+
+          applyBoardColor();
+
+          autoSave();
+        });
+
+      function applyBoardColor() {
+        canvasWrap.style.background = boardColor;
+
+        render();
+      }
+
+      /* =====================================================
+   POINTER DOWN
+===================================================== */
+
+      canvas.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+
+        canvas.setPointerCapture(e.pointerId);
+
+        const p = getPoint(e);
+
+        /* =========================
+           SELECT
+        ========================= */
+
+        if (currentTool === "select") {
+          const hit = findObjectAt(p.x, p.y);
+
+          if (hit) {
+            saveHistory();
+
+            selectedObjects = [hit];
+
+            activeObject = hit;
+
+            movingSelection = true;
+
+            moveStart = p;
+
+            showSelectionToolbar();
+
+            render();
+          } else {
+            selectedObjects = [];
+
+            activeObject = null;
+
+            movingSelection = false;
+
+            hideSelectionToolbar();
+
+            render();
+          }
+
+          return;
+        }
+
+        /* =========================
+           ERASER
+        ========================= */
+
+        if (currentTool === "eraser") {
+          /*
+             IMPORTANT:
+             Eraser does NOT erase on simple click.
+             It starts deleting only when pointer
+             actually moves.
+            */
+
+          drawing = false;
+
+          startPoint = p;
+
+          return;
+        }
+
+        /* =========================
+           LASSO
+        ========================= */
+
+        if (currentTool === "lasso") {
+          drawing = true;
+
+          lassoPoints = [p];
+
+          selectedObjects = [];
+
+          hideSelectionToolbar();
+
+          render();
+
+          return;
+        }
+
+        /* =========================
+           FREE DRAW
+        ========================= */
+
+        if (currentTool === "pencil" || currentTool === "brush") {
+          saveHistory();
+
+          drawing = true;
+
+          const stroke = {
+            id: createId(),
+
+            type: "stroke",
+
+            mode: currentTool,
+
+            color: currentColor,
+
+            size: brushSize,
+
+            points: [p],
+          };
+
+          objects.push(stroke);
+
+          activeObject = stroke;
+
+          return;
+        }
+
+        /* =========================
+           SHAPES
+        ========================= */
+
+        if (shapeTools.includes(currentTool)) {
+          saveHistory();
+
+          drawing = true;
+
+          startPoint = p;
+
+          const shape = {
+            id: createId(),
+
+            type: currentTool,
+
+            x: p.x,
+
+            y: p.y,
+
+            x2: p.x,
+
+            y2: p.y,
+
+            color: currentColor,
+
+            size: brushSize,
+          };
+
+          objects.push(shape);
+
+          activeObject = shape;
+        }
+      });
+
+      /* =====================================================
+   POINTER MOVE
+===================================================== */
+
+      canvas.addEventListener("pointermove", (e) => {
+        e.preventDefault();
+
+        const p = getPoint(e);
+
+        /* =========================
+           SELECT MOVE
+        ========================= */
+
+        if (currentTool === "select" && movingSelection && activeObject) {
+          const dx = p.x - moveStart.x;
+
+          const dy = p.y - moveStart.y;
+
+          moveObject(activeObject, dx, dy);
+
+          moveStart = p;
+
+          updateSelectionToolbar();
+
+          render();
+
+          return;
+        }
+
+        /* =========================
+           ERASER DRAG
+        ========================= */
+
+        if (currentTool === "eraser" && startPoint) {
+          /*
+             Only start erasing after
+             actual pointer movement.
+            */
+
+          const distance = Math.hypot(p.x - startPoint.x, p.y - startPoint.y);
+
+          if (distance > 2) {
+            eraseAt(p.x, p.y);
+
+            startPoint = p;
+          }
+
+          return;
+        }
+
+        /* =========================
+           LASSO
+        ========================= */
+
+        if (currentTool === "lasso" && drawing) {
+          lassoPoints.push(p);
+
+          render();
+
+          drawLasso();
+
+          return;
+        }
+
+        if (!drawing) return;
+
+        /* =========================
+           FREE DRAW
+        ========================= */
+
+        if (currentTool === "pencil" || currentTool === "brush") {
+          const stroke = objects[objects.length - 1];
+
+          if (stroke && stroke.type === "stroke") {
+            const previous = stroke.points[stroke.points.length - 1];
+
+            /*
+                 Smooth interpolation
+                */
+
+            const smoothed = {
+              x: previous.x * 0.25 + p.x * 0.75,
+
+              y: previous.y * 0.25 + p.y * 0.75,
+            };
+
+            stroke.points.push(smoothed);
+
+            render();
+          }
+
+          return;
+        }
+
+        /* =========================
+           SHAPE LIVE PREVIEW
+        ========================= */
+
+        if (shapeTools.includes(currentTool)) {
+          const shape = objects[objects.length - 1];
+
+          shape.x2 = p.x;
+
+          shape.y2 = p.y;
+
+          render();
+        }
+      });
+
+      /* =====================================================
+   POINTER UP
+===================================================== */
+
+      canvas.addEventListener("pointerup", (e) => {
+        const p = getPoint(e);
+
+        /* SELECT */
+
+        if (currentTool === "select") {
+          if (movingSelection) {
+            movingSelection = false;
+
+            activeObject = null;
+
+            autoSave();
+
+            updateSelectionToolbar();
+          }
+
+          return;
+        }
+
+        /* LASSO */
+
+        if (currentTool === "lasso" && drawing) {
+          drawing = false;
+
+          finishLasso();
+
+          lassoPoints = [];
+
+          render();
+
+          return;
+        }
+
+        /* ERASER */
+
+        if (currentTool === "eraser") {
+          startPoint = null;
+
+          autoSave();
+
+          return;
+        }
+
+        drawing = false;
+
+        startPoint = null;
+
+        activeObject = null;
+
+        autoSave();
+
+        render();
+      });
+
+      /* =====================================================
+   ID
+===================================================== */
+
+      function createId() {
+        return Date.now().toString(36) + Math.random().toString(36).slice(2);
+      }
+
+      /* =====================================================
+   RENDER
+===================================================== */
+
+      function render() {
+        ctx.save();
+
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (gridEnabled) {
+          drawGrid();
+        }
+
+        objects.forEach((obj) => {
+          drawObject(obj);
+        });
+
+        drawSelectionBoxes();
+
+        ctx.restore();
+      }
+
+      /* =====================================================
+   DRAW OBJECT
+===================================================== */
+
+      function drawObject(obj) {
+        if (obj.type === "stroke") {
+          drawStroke(obj);
+
+          return;
+        }
+
+        if (obj.type === "emoji") {
+          drawEmoji(obj);
+
+          return;
+        }
+
+        drawShape(obj);
+      }
+
+      /* =====================================================
+   STROKE
+===================================================== */
+
+      function drawStroke(obj) {
+        if (obj.points.length < 1) return;
+
+        ctx.save();
+
+        ctx.beginPath();
+
+        ctx.lineCap = "round";
+
+        ctx.lineJoin = "round";
+
+        ctx.strokeStyle = obj.color;
+
+        if (obj.mode === "pencil") {
+          ctx.lineWidth = obj.size;
+
+          ctx.globalAlpha = 0.97;
+
+          ctx.shadowBlur = 0;
+        } else {
+          /*
+         Real brush feeling
+        */
+
+          ctx.lineWidth = obj.size * 2.1;
+
+          ctx.globalAlpha = 0.66;
+
+          ctx.shadowBlur = obj.size * 0.65;
+
+          ctx.shadowColor = obj.color;
+        }
+
+        const pts = obj.points;
+
+        ctx.moveTo(pts[0].x, pts[0].y);
+
+        if (pts.length === 1) {
+          ctx.lineTo(pts[0].x + 0.01, pts[0].y + 0.01);
+        }
+
+        for (let i = 1; i < pts.length - 1; i++) {
+          const current = pts[i];
+
+          const next = pts[i + 1];
+
+          const midX = (current.x + next.x) / 2;
+
+          const midY = (current.y + next.y) / 2;
+
+          ctx.quadraticCurveTo(
+            current.x,
+            current.y,
+
+            midX,
+            midY,
+          );
+        }
+
+        if (pts.length > 1) {
+          const last = pts[pts.length - 1];
+
+          ctx.lineTo(last.x, last.y);
+        }
+
+        ctx.stroke();
+
+        ctx.restore();
+      }
+
+      /* =====================================================
+   SHAPES
+===================================================== */
+
+      function drawShape(obj) {
+        const x1 = obj.x;
+
+        const y1 = obj.y;
+
+        const x2 = obj.x2;
+
+        const y2 = obj.y2;
+
+        ctx.save();
+
+        ctx.beginPath();
+
+        ctx.strokeStyle = obj.color;
+
+        ctx.lineWidth = obj.size;
+
+        ctx.lineCap = "round";
+
+        ctx.lineJoin = "round";
+
+        /* LINE */
+
+        if (obj.type === "line") {
+          ctx.moveTo(x1, y1);
+
+          ctx.lineTo(x2, y2);
+        } else if (obj.type === "rect") {
+
+        /* RECTANGLE */
+          ctx.rect(x1, y1, x2 - x1, y2 - y1);
+        } else if (obj.type === "circle") {
+
+        /* CIRCLE */
+          const radius = Math.hypot(x2 - x1, y2 - y1);
+
+          ctx.arc(x1, y1, radius, 0, Math.PI * 2);
+        } else if (obj.type === "ellipse") {
+
+        /* ELLIPSE */
+          ctx.ellipse(
+            (x1 + x2) / 2,
+            (y1 + y2) / 2,
+
+            Math.abs(x2 - x1) / 2,
+            Math.abs(y2 - y1) / 2,
+
+            0,
+            0,
+            Math.PI * 2,
+          );
+        } else if (obj.type === "triangle") {
+
+        /* PERFECT TRIANGLE */
+          const left = Math.min(x1, x2);
+
+          const right = Math.max(x1, x2);
+
+          const top = Math.min(y1, y2);
+
+          const bottom = Math.max(y1, y2);
+
+          const centerX = (left + right) / 2;
+
+          ctx.moveTo(centerX, top);
+
+          ctx.lineTo(right, bottom);
+
+          ctx.lineTo(left, bottom);
+
+          ctx.closePath();
+        } else if (obj.type === "star") {
+
+        /* STAR */
+          drawPolygonShape(ctx, obj, 5, 0.45);
+        } else if (obj.type === "diamond") {
+
+        /* DIAMOND */
+          const cx = (x1 + x2) / 2;
+
+          const cy = (y1 + y2) / 2;
+
+          ctx.moveTo(cx, y1);
+
+          ctx.lineTo(x2, cy);
+
+          ctx.lineTo(cx, y2);
+
+          ctx.lineTo(x1, cy);
+
+          ctx.closePath();
+        } else if (obj.type === "hex") {
+
+        /* HEXAGON */
+          drawRegularPolygon(ctx, obj, 6);
+        } else if (obj.type === "pentagon") {
+
+        /* PENTAGON */
+          drawRegularPolygon(ctx, obj, 5);
+        } else if (obj.type === "arrow") {
+
+        /* ARROW */
+          const angle = Math.atan2(y2 - y1, x2 - x1);
+
+          const head = Math.max(12, obj.size * 3);
+
+          ctx.moveTo(x1, y1);
+
+          ctx.lineTo(x2, y2);
+
+          ctx.moveTo(x2, y2);
+
+          ctx.lineTo(
+            x2 - head * Math.cos(angle - 0.5),
+
+            y2 - head * Math.sin(angle - 0.5),
+          );
+
+          ctx.moveTo(x2, y2);
+
+          ctx.lineTo(
+            x2 - head * Math.cos(angle + 0.5),
+
+            y2 - head * Math.sin(angle + 0.5),
+          );
+        }
+
+        ctx.stroke();
+
+        ctx.restore();
+      }
+
+      /* =====================================================
+   POLYGON
+===================================================== */
+
+      function drawRegularPolygon(context, obj, sides) {
+        const cx = (obj.x + obj.x2) / 2;
+
+        const cy = (obj.y + obj.y2) / 2;
+
+        const rx = Math.abs(obj.x2 - obj.x) / 2;
+
+        const ry = Math.abs(obj.y2 - obj.y) / 2;
+
+        for (let i = 0; i < sides; i++) {
+          const angle = -Math.PI / 2 + (i * Math.PI * 2) / sides;
+
+          const px = cx + Math.cos(angle) * rx;
+
+          const py = cy + Math.sin(angle) * ry;
+
+          if (i === 0) context.moveTo(px, py);
+          else context.lineTo(px, py);
+        }
+
+        context.closePath();
+      }
+
+      function drawPolygonShape(context, obj, points, innerRatio) {
+        const cx = (obj.x + obj.x2) / 2;
+
+        const cy = (obj.y + obj.y2) / 2;
+
+        const radius =
+          Math.min(Math.abs(obj.x2 - obj.x), Math.abs(obj.y2 - obj.y)) / 2;
+
+        for (let i = 0; i < points * 2; i++) {
+          const r = i % 2 === 0 ? radius : radius * innerRatio;
+
+          const angle = -Math.PI / 2 + (i * Math.PI) / points;
+
+          const px = cx + Math.cos(angle) * r;
+
+          const py = cy + Math.sin(angle) * r;
+
+          if (i === 0) context.moveTo(px, py);
+          else context.lineTo(px, py);
+        }
+
+        context.closePath();
+      }
+
+      /* =====================================================
+   EMOJI
+===================================================== */
+
+      function drawEmoji(obj) {
+        ctx.save();
+
+        ctx.font = `${obj.size}px "Segoe UI Emoji","Apple Color Emoji",Arial`;
+
+        ctx.textAlign = "center";
+
+        ctx.textBaseline = "middle";
+
+        ctx.fillText(obj.emoji, obj.x, obj.y);
+
+        ctx.restore();
+      }
+
+      /* =====================================================
+   FIND OBJECT
+===================================================== */
+
+      function findObjectAt(x, y) {
+        /*
+     Reverse order = top object first
+    */
+
+        for (let i = objects.length - 1; i >= 0; i--) {
+          const obj = objects[i];
+
+          if (obj.type === "emoji") {
+            if (Math.hypot(x - obj.x, y - obj.y) <= obj.size * 0.65) {
+              return obj;
+            }
+          } else if (obj.type === "stroke") {
+            if (pointNearStroke(x, y, obj, 10)) {
+              return obj;
+            }
+          } else {
+            const bounds = getBounds(obj);
+
+            if (
+              x >= bounds.left - 10 &&
+              x <= bounds.right + 10 &&
+              y >= bounds.top - 10 &&
+              y <= bounds.bottom + 10
+            ) {
+              return obj;
+            }
+          }
+        }
+
+        return null;
+      }
+
+      /* =====================================================
+   STROKE HIT TEST
+===================================================== */
+
+      function pointNearStroke(x, y, obj, tolerance) {
+        for (let i = 0; i < obj.points.length; i++) {
+          const p = obj.points[i];
+
+          if (Math.hypot(x - p.x, y - p.y) <= tolerance + obj.size * 1.5) {
+            return true;
+          }
+        }
+
+        return false;
+      }
+
+      /* =====================================================
+   BOUNDS
+===================================================== */
+
+      function getBounds(obj) {
+        if (obj.type === "emoji") {
+          return {
+            left: obj.x - obj.size * 0.5,
+
+            right: obj.x + obj.size * 0.5,
+
+            top: obj.y - obj.size * 0.5,
+
+            bottom: obj.y + obj.size * 0.5,
+          };
+        }
+
+        if (obj.type === "stroke") {
+          const xs = obj.points.map((p) => p.x);
+
+          const ys = obj.points.map((p) => p.y);
+
+          return {
+            left: Math.min(...xs),
+
+            right: Math.max(...xs),
+
+            top: Math.min(...ys),
+
+            bottom: Math.max(...ys),
+          };
+        }
+
+        return {
+          left: Math.min(obj.x, obj.x2),
+
+          right: Math.max(obj.x, obj.x2),
+
+          top: Math.min(obj.y, obj.y2),
+
+          bottom: Math.max(obj.y, obj.y2),
+        };
+      }
+
+      /* =====================================================
+   MOVE OBJECT
+===================================================== */
+
+      function moveObject(obj, dx, dy) {
+        if (obj.type === "emoji") {
+          obj.x += dx;
+
+          obj.y += dy;
+
+          return;
+        }
+
+        if (obj.type === "stroke") {
+          obj.points.forEach((p) => {
+            p.x += dx;
+
+            p.y += dy;
+          });
+
+          return;
+        }
+
+        obj.x += dx;
+        obj.y += dy;
+
+        obj.x2 += dx;
+        obj.y2 += dy;
+      }
+
+      /* =====================================================
+   ERASER
+===================================================== */
+
+      function eraseAt(x, y) {
+        /*
+     Eraser removes only the object
+     directly touched by the eraser.
+
+     It does NOT clear the whole board.
+    */
+
+        const hit = findObjectAt(x, y);
+
+        if (!hit) return;
+
+        /*
+     Avoid deleting same object
+     repeatedly while dragging.
+    */
+
+        if (eraseAt.lastId === hit.id) {
+          return;
+        }
+
+        eraseAt.lastId = hit.id;
+
+        const index = objects.indexOf(hit);
+
+        if (index !== -1) {
+          objects.splice(index, 1);
+
+          selectedObjects = selectedObjects.filter((obj) => obj !== hit);
+
+          hideSelectionToolbar();
+
+          render();
+
+          autoSave();
+        }
+      }
+
+      eraseAt.lastId = null;
+
+      /* =====================================================
+   LASSO FINISH
+===================================================== */
+
+      function finishLasso() {
+        if (lassoPoints.length < 3) {
+          return;
+        }
+
+        selectedObjects = [];
+
+        objects.forEach((obj) => {
+          /*
+             For strokes, if enough
+             points are inside the lasso,
+             select the stroke.
+            */
+
+          if (obj.type === "stroke") {
+            let insideCount = 0;
+
+            obj.points.forEach((p) => {
+              if (pointInsidePolygon(p, lassoPoints)) {
+                insideCount++;
+              }
+            });
+
+            /*
+                 One or more points inside
+                 means the stroke is marked.
+                */
+
+            if (insideCount > 0) {
+              selectedObjects.push(obj);
+            }
+          } else {
+            const center = getObjectCenter(obj);
+
+            if (pointInsidePolygon(center, lassoPoints)) {
+              selectedObjects.push(obj);
+            }
+          }
+        });
+
+        if (selectedObjects.length) {
+          setStatus(`${selectedObjects.length} item(s) marked`);
+
+          showSelectionToolbar();
+        } else {
+          setStatus("Nothing marked");
+
+          hideSelectionToolbar();
+        }
+
+        render();
+      }
+
+      /* =====================================================
+   POINT INSIDE LASSO
+===================================================== */
+
+      function pointInsidePolygon(point, polygon) {
+        let inside = false;
+
+        for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+          const xi = polygon[i].x;
+
+          const yi = polygon[i].y;
+
+          const xj = polygon[j].x;
+
+          const yj = polygon[j].y;
+
+          const intersect =
+            yi > point.y !== yj > point.y &&
+            point.x < ((xj - xi) * (point.y - yi)) / (yj - yi) + xi;
+
+          if (intersect) inside = !inside;
+        }
+
+        return inside;
+      }
+
+      /* =====================================================
+   GET CENTER
+===================================================== */
+
+      function getObjectCenter(obj) {
+        if (obj.type === "emoji") {
+          return {
+            x: obj.x,
+            y: obj.y,
+          };
+        }
+
+        const b = getBounds(obj);
+
+        return {
+          x: (b.left + b.right) / 2,
+
+          y: (b.top + b.bottom) / 2,
+        };
+      }
+
+      /* =====================================================
+   SELECTION BOX
+===================================================== */
+
+      function drawSelectionBoxes() {
+        selectedObjects.forEach((obj) => {
+          const b = getBounds(obj);
+
+          ctx.save();
+
+          ctx.strokeStyle = "#806cff";
+
+          ctx.lineWidth = 2;
+
+          ctx.setLineDash([6, 5]);
+
+          ctx.strokeRect(
+            b.left - 8,
+            b.top - 8,
+
+            b.right - b.left + 16,
+            b.bottom - b.top + 16,
+          );
+
+          ctx.restore();
+        });
+      }
+
+      /* =====================================================
+   FLOATING TOOLBAR
+===================================================== */
+
+      function showSelectionToolbar() {
+        if (!selectedObjects.length) {
+          hideSelectionToolbar();
+
+          return;
+        }
+
+        selectionToolbar.classList.add("show");
+
+        updateSelectionToolbar();
+      }
+
+      function updateSelectionToolbar() {
+        if (!selectedObjects.length) {
+          hideSelectionToolbar();
+
+          return;
+        }
+
+        const b = getSelectionBounds();
+
+        const centerX = (b.left + b.right) / 2;
+
+        let top = b.top - 12;
+
+        /*
+     Keep toolbar visible.
+    */
+
+        const toolbarHeight = 45;
+
+        if (top < toolbarHeight) {
+          top = b.bottom + 55;
+        }
+
+        selectionToolbar.style.left = centerX * zoom + "px";
+
+        selectionToolbar.style.top = top * zoom + "px";
+      }
+
+      function hideSelectionToolbar() {
+        selectionToolbar.classList.remove("show");
+      }
+
+      function getSelectionBounds() {
+        if (!selectedObjects.length) {
+          return {
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+          };
+        }
+
+        const bounds = selectedObjects.map((obj) => getBounds(obj));
+
+        return {
+          left: Math.min(...bounds.map((b) => b.left)),
+
+          right: Math.max(...bounds.map((b) => b.right)),
+
+          top: Math.min(...bounds.map((b) => b.top)),
+
+          bottom: Math.max(...bounds.map((b) => b.bottom)),
+        };
+      }
+
+      /* =====================================================
+   FLOATING MOVE
+===================================================== */
+
+      document.getElementById("moveSelection").addEventListener("click", () => {
+        if (!selectedObjects.length) return;
+
+        currentTool = "select";
+
+        document
+          .querySelectorAll("[data-tool]")
+          .forEach((b) => b.classList.remove("active"));
+
+        document.querySelector('[data-tool="select"]').classList.add("active");
+
+        setStatus("Move mode — drag selected object");
+      });
+
+      /* =====================================================
+   RESIZE SELECTED
+===================================================== */
+
+      document.getElementById("growSelection").addEventListener("click", () => {
+        resizeSelected(1.15);
+      });
+
+      document
+        .getElementById("shrinkSelection")
+        .addEventListener("click", () => {
+          resizeSelected(0.86);
+        });
+
+      function resizeSelected(factor) {
+        if (!selectedObjects.length) return;
+
+        saveHistory();
+
+        selectedObjects.forEach((obj) => {
+          const center = getObjectCenter(obj);
+
+          if (obj.type === "emoji") {
+            obj.size *= factor;
+          } else if (obj.type === "stroke") {
+            obj.size *= factor;
+
+            obj.points.forEach((p) => {
+              p.x = center.x + (p.x - center.x) * factor;
+
+              p.y = center.y + (p.y - center.y) * factor;
+            });
+          } else {
+            obj.x = center.x + (obj.x - center.x) * factor;
+
+            obj.y = center.y + (obj.y - center.y) * factor;
+
+            obj.x2 = center.x + (obj.x2 - center.x) * factor;
+
+            obj.y2 = center.y + (obj.y2 - center.y) * factor;
+          }
+        });
+
+        render();
+
+        updateSelectionToolbar();
+
+        autoSave();
+      }
+
+      /* =====================================================
+   CHANGE SELECTED COLOR
+===================================================== */
+
+      document
+        .getElementById("colorSelection")
+        .addEventListener("click", () => {
+          document.getElementById("customColor").click();
+        });
+
+      function changeSelectedColor() {
+        if (!selectedObjects.length) return;
+
+        saveHistory();
+
+        selectedObjects.forEach((obj) => {
+          if (obj.type === "emoji") {
+            /*
+                 Emoji color does not change.
+                 Other objects do.
+                */
+
+            return;
+          }
+
+          obj.color = currentColor;
+        });
+
+        render();
+
+        autoSave();
+      }
+
+      /* =====================================================
+   DELETE SELECTED
+===================================================== */
+
+      document
+        .getElementById("deleteSelection")
+        .addEventListener("click", () => {
+          if (!selectedObjects.length) return;
+
+          saveHistory();
+
+          objects = objects.filter((obj) => !selectedObjects.includes(obj));
+
+          selectedObjects = [];
+
+          hideSelectionToolbar();
+
+          render();
+
+          autoSave();
+
+          setStatus("Selected item(s) deleted");
+        });
+
+      /* =====================================================
+   CLOSE SELECTION
+===================================================== */
+
+      document
+        .getElementById("closeSelection")
+        .addEventListener("click", () => {
+          selectedObjects = [];
+
+          hideSelectionToolbar();
+
+          render();
+
+          setStatus("Selection cleared");
+        });
+
+      /* =====================================================
+   GRID
+===================================================== */
+
+      document.getElementById("gridBtn").addEventListener("click", function () {
+        gridEnabled = !gridEnabled;
+
+        this.classList.toggle("active", gridEnabled);
+
+        render();
+      });
+
+      function drawGrid() {
+        ctx.save();
+
+        ctx.strokeStyle = "#64748b38";
+
+        ctx.lineWidth = 1;
+
+        const gap = 25;
+
+        for (let x = 0; x < canvas.width; x += gap) {
+          ctx.beginPath();
+
+          ctx.moveTo(x, 0);
+
+          ctx.lineTo(x, canvas.height);
+
+          ctx.stroke();
+        }
+
+        for (let y = 0; y < canvas.height; y += gap) {
+          ctx.beginPath();
+
+          ctx.moveTo(0, y);
+
+          ctx.lineTo(canvas.width, y);
+
+          ctx.stroke();
+        }
+
+        ctx.restore();
+      }
+
+      /* =====================================================
+   UNDO
+===================================================== */
+
+      document.getElementById("undoBtn").addEventListener("click", () => {
+        if (!undoStack.length) return;
+
+        redoStack.push(makeSnapshot());
+
+        objects = undoStack.pop();
+
+        selectedObjects = [];
+
+        hideSelectionToolbar();
+
+        render();
+
+        autoSave();
+      });
+
+      /* =====================================================
+   REDO
+===================================================== */
+
+      document.getElementById("redoBtn").addEventListener("click", () => {
+        if (!redoStack.length) return;
+
+        undoStack.push(makeSnapshot());
+
+        objects = redoStack.pop();
+
+        selectedObjects = [];
+
+        hideSelectionToolbar();
+
+        render();
+
+        autoSave();
+      });
+
+      /* =====================================================
+   CLEAR
+===================================================== */
+
+      document.getElementById("clearBtn").addEventListener("click", () => {
+        if (!objects.length) return;
+
+        const ok = confirm("Clear the entire whiteboard?");
+
+        if (!ok) return;
+
+        saveHistory();
+
+        objects = [];
+
+        selectedObjects = [];
+
+        hideSelectionToolbar();
+
+        render();
+
+        autoSave();
+
+        setStatus("Whiteboard cleared");
+      });
+
+      /* =====================================================
+   EMOJI DATA
+===================================================== */
+
+      const emojiData = {
+        faces:
+          "😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨 🧐 🤓 😎 🤩 🥳 😏 😒 😞 😔 😟 😕 🙁 ☹️ 😣 😖 😫 😩 🥺 😢 😭 😤 😠 😡 🤬 🤯 😳 😱 😨 😰 😥 🤗 🤔 🤭 🤫 🤥 😶 😐 😑 😬 🙄 😯 😮 😲 🥱 😴 🤤 😪 😵 🤑 🤠",
+
+        animals:
+          "🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐸 🐵 🙈 🙉 🙊 🐔 🐧 🐦 🐤 🦆 🦅 🦉 🐺 🐗 🐴 🦄 🐝 🦋 🐌 🐞 🐜 🕷️ 🦂 🐢 🐍 🦎 🦖 🦕 🐙 🦑 🦀 🐠 🐟 🐡 🐬 🐳 🐋",
+
+        food: "🍏 🍎 🍐 🍊 🍋 🍌 🍉 🍇 🍓 🫐 🍒 🍑 🥭 🍍 🥥 🥝 🍅 🥑 🍆 🥔 🥕 🌽 🌶️ 🫑 🥒 🥬 🥦 🧄 🧅 🍞 🥐 🥖 🧀 🥚 🍳 🧇 🥞 🥓 🍔 🍟 🍕 🌭 🌮 🌯 🥗 🍿 🍪 🍩 🍰 🧁 🍫 🍭 🍬",
+
+        nature:
+          "🌈 ☀️ 🌤️ ⛅ 🌦️ 🌧️ ⛈️ 🌩️ ❄️ ☃️ ⛄ 🌪️ 🌫️ 🌙 🌕 ⭐ 🌟 ✨ ⚡ 🔥 💧 🌊 🌸 🌺 🌻 🌼 🌷 🌹 🥀 🌱 🌿 ☘️ 🍀 🍃 🍂 🍁 🌳 🌲 🌴 🌵 🌾",
+
+        activity:
+          "⚽ 🏀 🏈 ⚾ 🎾 🏐 🏉 🥏 🎱 🪀 🪁 🛹 🛼 🛷 ⛸️ 🥊 🥋 🎯 🏹 🎣 🤿 🏆 🥇 🥈 🥉 🎮 🕹️ 🎲 ♟️ 🎨 🎭 🎤 🎧 🎸 🎹 🥁 🎺 🎻",
+
+        objects:
+          "💡 🔦 🕯️ 🔥 📱 💻 ⌨️ 🖥️ 🖨️ 📷 📸 🎥 📺 📻 ⏰ ⌚ 🔑 🔒 🔓 🔔 🎁 🎈 🎉 🎊 ✏️ 📝 📚 📖 📕 📗 📘 📙 📎 ✂️ 📌 📍 🔍 💎 🚀 🚗 ✈️ 🚲",
+      };
+
+      /* =====================================================
+   EMOJI UI
+===================================================== */
+
+      const emojiBox = document.getElementById("emojiBox");
+
+      const emojiGrid = document.getElementById("emojiGrid");
+
+      document.getElementById("emojiButton").addEventListener("click", () => {
+        emojiBox.classList.toggle("show");
+      });
+
+      document.querySelectorAll(".emoji-tab").forEach((button) => {
+        button.addEventListener("click", () => {
+          document
+            .querySelectorAll(".emoji-tab")
+            .forEach((b) => b.classList.remove("active"));
+
+          button.classList.add("active");
+
+          loadEmojiCategory(button.dataset.category);
+        });
+      });
+
+      function loadEmojiCategory(category) {
+        emojiGrid.innerHTML = "";
+
+        const list = emojiData[category].split(" ");
+
+        list.forEach((emoji) => {
+          const button = document.createElement("button");
+
+          button.className = "emoji-item";
+
+          button.textContent = emoji;
+
+          button.addEventListener("click", () => {
+            addEmoji(emoji);
+          });
+
+          emojiGrid.appendChild(button);
+        });
+      }
+
+      loadEmojiCategory("faces");
+
+      /* =====================================================
+   ADD EMOJI
+===================================================== */
+
+      function addEmoji(emoji) {
+        saveHistory();
+
+        const obj = {
+          id: createId(),
+
+          type: "emoji",
+
+          emoji: emoji,
+
+          x: canvas.width / 2,
+
+          y: canvas.height / 2,
+
+          size: 48,
+        };
+
+        objects.push(obj);
+
+        selectedObjects = [obj];
+
+        currentTool = "select";
+
+        document
+          .querySelectorAll("[data-tool]")
+          .forEach((b) => b.classList.remove("active"));
+
+        document.querySelector('[data-tool="select"]').classList.add("active");
+
+        showSelectionToolbar();
+
+        render();
+
+        autoSave();
+
+        setStatus("Emoji added — drag to move");
+      }
+
+      /* =====================================================
+   ZOOM
+===================================================== */
+
+      function updateZoom() {
+        canvas.style.transform = `scale(${zoom})`;
+
+        canvas.style.transformOrigin = "center center";
+
+        document.getElementById("zoomValue").textContent =
+          Math.round(zoom * 100) + "%";
+
+        updateSelectionToolbar();
+      }
+
+      document.getElementById("zoomIn").addEventListener("click", () => {
+        zoom = Math.min(2, zoom + 0.1);
+
+        updateZoom();
+      });
+
+      document.getElementById("zoomOut").addEventListener("click", () => {
+        zoom = Math.max(0.5, zoom - 0.1);
+
+        updateZoom();
+      });
+
+      document.getElementById("resetZoom").addEventListener("click", () => {
+        zoom = 1;
+
+        updateZoom();
+      });
+
+      /* =====================================================
+   SAVE
+===================================================== */
+
+      document.getElementById("saveBtn").addEventListener("click", () => {
+        autoSave();
+
+        setStatus("Board saved locally 💾");
+      });
+
+      /* =====================================================
+   EXPORT
+===================================================== */
+
+      document.getElementById("exportBtn").addEventListener("click", () => {
+        selectedObjects = [];
+
+        hideSelectionToolbar();
+
+        render();
+
+        const link = document.createElement("a");
+
+        link.download = "NovaBoard.png";
+
+        link.href = canvas.toDataURL("image/png");
+
+        link.click();
+
+        setStatus("Board exported 📥");
+      });
+
+      /* =====================================================
+   KEYBOARD SHORTCUTS
+===================================================== */
+
+      document.addEventListener("keydown", (e) => {
+        if (e.ctrlKey && e.key.toLowerCase() === "z") {
+          e.preventDefault();
+
+          document.getElementById("undoBtn").click();
+        }
+
+        if (e.ctrlKey && e.key.toLowerCase() === "y") {
+          e.preventDefault();
+
+          document.getElementById("redoBtn").click();
+        }
+
+        if (e.key === "Escape") {
+          selectedObjects = [];
+
+          hideSelectionToolbar();
+
+          render();
+        }
+
+        if (e.key === "Delete" && selectedObjects.length) {
+          document.getElementById("deleteSelection").click();
+        }
+      });
+
+      /* =====================================================
+   INITIALIZE
+===================================================== */
+
+      applyBoardColor();
+
+      updateZoom();
+
+      render();
+
+      setStatus("Pencil ready — draw anywhere");
+    </script>
+  </body>
+</html>
